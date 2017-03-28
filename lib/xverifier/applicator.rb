@@ -1,0 +1,78 @@
+# frozen_string_literal: true
+
+module XVerifier
+  # @abstract implement `#call`
+  class Applicator
+    attr_accessor :applicable
+
+    def self.build_class(applicable)
+      if applicable.is_a?(Symbol)
+        MethodExtractor
+      elsif applicable.is_a?(String)
+        InstanceEvaler
+      elsif applicable.respond_to?(:to_proc)
+        ProcApplicatior
+      else
+        Quoter
+      end
+    end
+
+    def self.call(applicable, binding, context)
+      build_class(applicable).new(applicable).call(binding, context)
+    end
+
+    def initialize(applicable)
+      self.applicable = applicable
+    end
+
+    # @!method call(binding, context)
+    #   @abstract
+    #   @param binding [#instance_exec]
+    #   @param context
+
+    private
+
+    def invoke_lambda(lambda, binding, context)
+      if lambda.arity.zero?
+        binding.instance_exec(&lambda)
+      else
+        binding.instance_exec(context, &lambda)
+      end
+    end
+
+    class MethodExtractor < self
+      def call(binding, context)
+        invoke_lambda(binding.method(applicable), binding, context)
+      end
+    end
+
+    class InstanceEvaler < self
+      def call(binding, context)
+        if binding.is_a?(Binding)
+          binding = binding.dup
+          binding.local_variable_set(:context, context)
+          binding.eval(applicable, *caller_line)
+        else
+          binding.instance_eval(applicable, *caller_line)
+        end
+      end
+
+      def caller_line
+        _, file, line = caller(3...4)[0].match(/\A(.+):(\d+):[^:]+\z/).to_a
+        [file, Integer(line)]
+      end
+    end
+
+    class ProcApplicatior < self
+      def call(binding, context)
+        invoke_lambda(applicable.to_proc, binding, context)
+      end
+    end
+
+    class Quoter < self
+      def call(*)
+        applicable
+      end
+    end
+  end
+end
