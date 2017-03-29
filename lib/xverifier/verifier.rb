@@ -10,6 +10,9 @@ module XVerifier
   # @attr messages [Array]
   #   Array to collect all messages yielded by verifier
   class Verifier
+    autoload :ApplicatorWithOptionsBuilder,
+             'xverifier/verifier/applicator_with_options_builder'
+
     attr_accessor :model, :messages
 
     # @example with block
@@ -36,23 +39,9 @@ module XVerifier
     #   call verifier if only block invocation result is falsey
     # @yield context on `#verfify!` calls
     # @return [Array] list of all verifiers already defined
-    def self.verify(verifier = nil, **options, &block)
-      bound_applicators << ApplicatorWithOptions.new(
-        *normalize_verify_options(verifier, options, block)
-      )
-    end
-
-    def self.normalize_verify_options(verifier, options, block)
-      if block
-        [block, verifier&.to_hash || {}]
-      elsif verifier.is_a?(Class) && verifier < self
-        [
-          ->(context) { messages.concat(verifier.call(model, context)) },
-          options
-        ]
-      else
-        [verifier, options]
-      end
+    def self.verify(*args, &block)
+      bound_applicators <<
+        ApplicatorWithOptionsBuilder.call(self, *args, &block)
     end
 
     def self.bound_applicators
