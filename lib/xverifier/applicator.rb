@@ -17,6 +17,10 @@ module XVerifier
       end
     end
 
+    def self.build(applicable)
+      build_class(applicable).new(applicable)
+    end
+
     def self.call(applicable, binding, context)
       build_class(applicable).new(applicable).call(binding, context)
     end

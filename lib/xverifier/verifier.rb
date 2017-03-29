@@ -37,12 +37,26 @@ module XVerifier
     # @yield context on `#verfify!` calls
     # @return [Array] list of all verifiers already defined
     def self.verify(verifier = nil, **options, &block)
-      verifiers << [verifier || block, **options]
+      bound_applicators << ApplicatorWithOptions.new(
+        *normalize_verify_options(verifier, options, block)
+      )
     end
 
-    # @return [Array] List of all verifiers
-    def self.verifiers
-      @verifiers ||= []
+    def self.normalize_verify_options(verifier, options, block)
+      if block
+        [block, verifier&.to_hash || {}]
+      elsif verifier.is_a?(Class) && verifier < self
+        [
+          ->(context) { messages.concat(verifier.call(model, context)) },
+          options
+        ]
+      else
+        [verifier, options]
+      end
+    end
+
+    def self.bound_applicators
+      @bound_applicators ||= []
     end
 
     # @param model generic model to validate
@@ -61,18 +75,11 @@ module XVerifier
     # @todo fix to match style guides
     # @param context context in which model would be valdiated
     # @return [Array] list of messages yielded by verifier
-    def verify!(context = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/LineLength
+    def verify!(context = {})
       self.messages = []
 
-      self.class.verifiers.each do |verifier, options|
-        next unless Applicator.call(options.fetch(:if, true), self, context)
-        next if Applicator.call(options.fetch(:unless, false), self, context)
-
-        if verifier.is_a?(Class) && verifier < self.class
-          messages.concat verifier.call(model, context)
-        else
-          Applicator.call(verifier, self, context)
-        end
+      self.class.bound_applicators.each do |bound_applicator|
+        bound_applicator.call(self, context)
       end
 
       messages
