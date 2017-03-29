@@ -19,6 +19,8 @@ module XVerifier
     #   verify { |context| message!() if context[:foo] }
     # @example with proc
     #   verify -> (context) { message!() if context[:foo] }
+    # @example with hash
+    #  verify -> { message!() } if: { foo: true }
     # @example cotnext could be ommited from lambda params
     #   verify -> { message!() }, if: -> (context) { context[:foo] }
     # @example with symbol
@@ -44,6 +46,8 @@ module XVerifier
         ApplicatorWithOptionsBuilder.call(self, *args, &block)
     end
 
+    # @return [Array(ApplicatorWithOptions)]
+    #   List of applicators, bound by .verify
     def self.bound_applicators
       @bound_applicators ||= []
     end
@@ -61,7 +65,6 @@ module XVerifier
       self.messages = []
     end
 
-    # @todo fix to match style guides
     # @param context context in which model would be valdiated
     # @return [Array] list of messages yielded by verifier
     def verify!(context = {})
