@@ -1,11 +1,12 @@
 # frozen_string_literal: true
 
 describe XVerifier::Applicator do
+  subject(:applicator) { described_class.build(applicable) }
+
   let(:binding_class) do
     Class.new { define_method(:foo) { |*| } }
   end
 
-  subject(:applicator) { described_class.build(applicable) }
   let(:binding_) { instance_double(binding_class, :binding, foo: result) }
   let(:context) { instance_double(Object, :context) }
   let(:result) { instance_double(Object, :result) }
@@ -23,12 +24,14 @@ describe XVerifier::Applicator do
 
   context 'Proxy' do
     let(:applicable) { described_class.build(result) }
+
     it { is_expected.to be_a XVerifier::Applicator::Proxy }
     it_behaves_like 'its call returns result'
   end
 
   context 'MethodExtractor' do
     let(:applicable) { :foo }
+
     it { is_expected.to be_a XVerifier::Applicator::MethodExtractor }
 
     it_behaves_like 'its call returns result' do
@@ -49,17 +52,20 @@ describe XVerifier::Applicator do
 
       context 'when applicable = context' do
         let(:applicable) { 'context' }
+
         it { is_expected.to eq(context) }
       end
 
       context 'when binding_ is a Binding' do
         let(:binding_) { binding }
         let(:applicable) { '[result, context]' }
+
         it { is_expected.to eq [result, context] }
 
         context 'when binding_ does not have "context"' do
           let(:binding_) { Object.new.send(:binding) }
           let(:applicable) { 'context' }
+
           it { is_expected.to eq(context) }
         end
       end
@@ -68,6 +74,7 @@ describe XVerifier::Applicator do
 
   context 'ProcApplicatior' do
     let(:applicable) { -> { foo } }
+
     it { is_expected.to be_a XVerifier::Applicator::ProcApplicatior }
 
     describe 'call(context, binding_)' do
@@ -76,6 +83,7 @@ describe XVerifier::Applicator do
 
       context 'when applicable requests arg' do
         let(:applicable) { ->(context) { [foo, context] } }
+
         it { is_expected.to eq [result, context] }
       end
     end
@@ -83,6 +91,7 @@ describe XVerifier::Applicator do
 
   context 'Quoter' do
     let(:applicable) { result }
+
     it { is_expected.to be_a XVerifier::Applicator::Quoter }
     it_behaves_like 'its call returns result'
   end

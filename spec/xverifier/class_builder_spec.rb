@@ -14,6 +14,7 @@ describe XVerifier::ClassBuilder do
 
   describe 'XVerifier::ClassBuilder flow' do
     subject(:class_builder) { described_class.new([unbuildabe, recursive]) }
+
     its(:call) { is_expected.to eq buildable }
   end
 

@@ -21,3 +21,11 @@ Lint/AmbiguousBlockAssociation:
 RSpec/FilePath:
   CustomTransform:
     XVerifier: xverifier
+
+RSpec/MessageSpies:
+  # Spies are not always usable, i.e. we wanna to stub something we haven't create
+  EnforcedStyle: receive
+
+RSpec/NestedGroups:
+  # Extra nesting is good, not bad!
+  Enabled: false
