@@ -27,4 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '~> 0.9.8'
   spec.add_development_dependency 'launchy', '~> 2.4'
   spec.add_development_dependency 'coveralls', '~> 0.8.19'
+  spec.add_development_dependency 'rubocop-rspec', '~> 1.5'
+  spec.add_development_dependency 'rspec-its', '~> 1.1'
 end

@@ -1,3 +1,6 @@
+require:
+  - rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 2.3
   Exclude:
@@ -14,3 +17,7 @@ Metrics/BlockLength:
 Lint/AmbiguousBlockAssociation:
   # REVIEW: why is that dangerous?
   Enabled: false
+
+RSpec/FilePath:
+  CustomTransform:
+    XVerifier: xverifier
