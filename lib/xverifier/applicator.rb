@@ -12,8 +12,8 @@ module XVerifier
     # Proxy is used when applicable itself is an Applicator.
     # It just delegates #call to it
     # @example
-    #   Applicator.call(Applicator.build(:foo), binding, context)
-    #   # => Applicator.call(:foo, binding, context)
+    #   Applicator.call(Applicator.build(:foo), binding_, context)
+    #   # => Applicator.call(:foo, binding_, context)
     class Proxy < self
       # @param applicable [Applicator]
       # @return Proxy if applicable is Applicator
@@ -22,16 +22,16 @@ module XVerifier
         self if applicable.is_a?(Applicator)
       end
 
-      # @param binding [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to applicate applicable
       # @param context additional info to send it to applicable
       # @return application result
-      def call(binding, context)
-        applicable.call(binding, context)
+      def call(binding_, context)
+        applicable.call(binding_, context)
       end
     end
 
     # MethodExtractor is used when applicable is a symbol.
-    # It extracts extracts method from binding and executes it on binding
+    # It extracts extracts method from binding_ and executes it on binding_
     # (so it works just like send except it sends nothing
     # when method arity is zero).
     # @example
@@ -46,18 +46,18 @@ module XVerifier
         self if applicable.is_a?(Symbol)
       end
 
-      # @param binding [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to applicate applicable
       # @param context additional info to send it to applicable
       # @return application result
-      def call(binding, context)
-        invoke_lambda(binding.method(applicable), binding, context)
+      def call(binding_, context)
+        invoke_lambda(binding_.method(applicable), binding_, context)
       end
     end
 
     # InstanceEvaluator is used for string. It works like instance_eval or
-    # Binding#eval depending on binding class
+    # Binding#eval depending on binding_ class
     # @example
-    #   Applicator.call('foo if context[:foo]', binding, context)
+    #   Applicator.call('foo if context[:foo]', binding_, context)
     #   # => foo if context[:foo]
     class InstanceEvaluator < self
       # @param applicable [String]
@@ -67,16 +67,16 @@ module XVerifier
         self if applicable.is_a?(String)
       end
 
-      # @param binding [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to applicate applicable
       # @param context additional info to send it to applicable
       # @return application result
-      def call(binding, context)
-        if binding.is_a?(Binding)
-          binding = binding.dup
-          binding.local_variable_set(:context, context)
-          binding.eval(applicable, *caller_line)
+      def call(binding_, context)
+        if binding_.is_a?(Binding)
+          binding_ = binding_.dup
+          binding_.local_variable_set(:context, context)
+          binding_.eval(applicable, *caller_line)
         else
-          binding.instance_eval(applicable, *caller_line)
+          binding_.instance_eval(applicable, *caller_line)
         end
       end
 
@@ -90,10 +90,10 @@ module XVerifier
     # ProcApplicatior is used when #to_proc is available.
     # It works not just with procs, but also with hashes etc
     # @example with proc
-    #   Applicator.call(-> { foo }, binding, context) # => foo
+    #   Applicator.call(-> { foo }, binding_, context) # => foo
     # @example with hash
-    #   Applicator.call(Hash[foo: true], binding, :foo) # => true
-    #   Applicator.call(Hash[foo: true], binding, :bar) # => nil
+    #   Applicator.call(Hash[foo: true], binding_, :foo) # => true
+    #   Applicator.call(Hash[foo: true], binding_, :bar) # => nil
     class ProcApplicatior < self
       # @param applicable [#to_proc]
       # @return ProcApplicatior if applicable accepts #to_proc
@@ -102,17 +102,17 @@ module XVerifier
         self if applicable.respond_to?(:to_proc)
       end
 
-      # @param binding [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to applicate applicable
       # @param context additional info to send it to applicable
       # @return application result
-      def call(binding, context)
-        invoke_lambda(applicable.to_proc, binding, context)
+      def call(binding_, context)
+        invoke_lambda(applicable.to_proc, binding_, context)
       end
     end
 
     # Quoter is used when there is no other way to applicate applicatable.
     # @example
-    #   Applicator.call(true, binding, context) # => true
+    #   Applicator.call(true, binding_, context) # => true
     class Quoter < self
       # @return applicable without changes
       def call(*)
@@ -127,19 +127,19 @@ module XVerifier
 
     attr_accessor :applicable
 
-    # Applicates applicable on binding with context
+    # Applicates applicable on binding_ with context
     # @todo add @see #initialize when it's todo done
     # @param applicable [applicable]
     #   see examples in sublcasses defenitions
-    # @param binding [#instance_exec]
+    # @param binding_ [#instance_exec]
     #   where should applicable be applied. It could be either a generic object,
-    #   where it would be `instance_exec`uted, or a binding
+    #   where it would be `instance_exec`uted, or a binding_
     # @param context
     #   geneneric data you want to pass to applicable function.
     #   If applicable would not accept params, it would not be sent
     # @return application result
-    def self.call(applicable, binding, context)
-      build(applicable).call(binding, context)
+    def self.call(applicable, binding_, context)
+      build(applicable).call(binding_, context)
     end
 
     # Always use build instead of new
@@ -151,10 +151,10 @@ module XVerifier
       self.applicable = applicable
     end
 
-    # @!method call(binding, context)
+    # @!method call(binding_, context)
     #   @abstract
-    #   Applicates applicable on binding with context
-    #   @param binding [#instance_exec] biding would be used in application
+    #   Applicates applicable on binding_ with context
+    #   @param binding_ [#instance_exec] biding would be used in application
     #   @param context param would be passed if requested
     #   @return application result
 
@@ -162,14 +162,14 @@ module XVerifier
 
     # invokes lambda basing on it's arity
     # @param [Proc] lambda
-    # @param binding [#instance_exec] binding would be used in application
+    # @param binding_ [#instance_exec] binding_ would be used in application
     # @param context param would be passed if lambda arity > 0
     # @return invokation result
-    def invoke_lambda(lambda, binding, context)
+    def invoke_lambda(lambda, binding_, context)
       if lambda.arity.zero?
-        binding.instance_exec(&lambda)
+        binding_.instance_exec(&lambda)
       else
-        binding.instance_exec(context, &lambda)
+        binding_.instance_exec(context, &lambda)
       end
     end
   end
