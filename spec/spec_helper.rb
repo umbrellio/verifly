@@ -16,3 +16,7 @@ RSpec.configure do |config|
     mocks.verify_doubled_constant_names = true
   end
 end
+
+def applicator(applicable)
+  XVerifier::Applicator.build(applicable)
+end

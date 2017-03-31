@@ -28,16 +28,16 @@ module XVerifier
 
     # Applicates main action if if_condition applicated to truthy value
     # and unless_condition applicated to falsey value
-    # @param binding [#instance_exec]
+    # @param binding_ [#instance_exec]
     #   binding to applicate (see Applicator)
     # @param context
     #   generic context to applicate (see Applicator)
     # @return main action application result
     # @return [nil] if conditions check failed
-    def call(binding, context)
-      return unless if_condition.call(binding, context)
-      return if unless_condition.call(binding, context)
-      action.call(binding, context)
+    def call(binding_, context)
+      return unless if_condition.call(binding_, context)
+      return if unless_condition.call(binding_, context)
+      action.call(binding_, context)
     end
   end
 end

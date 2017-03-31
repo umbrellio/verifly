@@ -151,6 +151,12 @@ module XVerifier
       self.applicable = applicable
     end
 
+    # @param [Applicator] other
+    # @return [Boolean] true if applicable matches, false otherwise
+    def ==(other)
+      applicable == other.applicable
+    end
+
     # @!method call(binding_, context)
     #   @abstract
     #   Applicates applicable on binding_ with context

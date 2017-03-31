@@ -6,7 +6,7 @@ describe XVerifier::Applicator do
   end
 
   subject(:applicator) { described_class.build(applicable) }
-  let(:binding_) { instance_double(binding_class, :binding_, foo: result) }
+  let(:binding_) { instance_double(binding_class, :binding, foo: result) }
   let(:context) { instance_double(Object, :context) }
   let(:result) { instance_double(Object, :result) }
 
