@@ -50,7 +50,25 @@ module XVerifier
       # @param context additional info to send it to applicable
       # @return application result
       def call(binding_, context)
-        invoke_lambda(binding_.method(applicable), binding_, context)
+        if binding_.is_a?(Binding)
+          call_on_binding(binding_, context)
+        else
+          invoke_lambda(binding_.method(applicable), binding_, context)
+        end
+      end
+
+      private
+
+      # When Binding is target, we have to respect both methods and variables
+      # @param binding_ [Binding] target to applicate applicable
+      # @param context additional info to send it to applicable
+      # @return application result
+      def call_on_binding(binding_, context)
+        if binding_.receiver.respond_to?(applicable)
+          invoke_lambda(binding_.receiver.method(applicable), binding_, context)
+        else
+          binding_.local_variable_get(applicable)
+        end
       end
     end
 

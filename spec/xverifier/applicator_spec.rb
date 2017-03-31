@@ -34,9 +34,31 @@ describe XVerifier::Applicator do
 
     it { is_expected.to be_a XVerifier::Applicator::MethodExtractor }
 
-    it_behaves_like 'its call returns result' do
-      before do
-        expect(binding_).to receive(:foo).with(context).and_return(result)
+    describe 'call(context, binding_)' do
+      include_context 'call(context, binding_)'
+
+      context 'method on generic object' do
+        before do
+          expect(binding_).to receive(:foo).with(context).and_return(result)
+        end
+
+        it { is_expected.to eq(result) }
+      end
+
+      context 'method on binding' do
+        let(:binding_) { binding }
+        let(:applicable) { :result }
+
+        it { is_expected.to eq(result) }
+      end
+
+      context 'variable on binding' do
+        let(:binding_) do
+          foo = result
+          binding
+        end
+
+        it { is_expected.to eq(result) }
       end
     end
   end
