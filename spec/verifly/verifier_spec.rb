@@ -23,7 +23,7 @@ describe Verifly::Verifier do
       verifier.verify mark(:bar), if: ->(context) { context[:bar] }
       verifier.verify mark(:baz)
 
-      expect(verifier.call(model, context)).to eq [%i(foo), %i(baz)]
+      expect(verifier.call(model, context)).to eq [%i[foo], %i[baz]]
     end
 
     specify 'unless' do
@@ -31,7 +31,7 @@ describe Verifly::Verifier do
       verifier.verify mark(:bar), unless: ->(context) { context[:bar] }
       verifier.verify mark(:baz)
 
-      expect(verifier.call(model, context)).to eq [%i(bar), %i(baz)]
+      expect(verifier.call(model, context)).to eq [%i[bar], %i[baz]]
     end
   end
 

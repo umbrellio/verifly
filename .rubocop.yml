@@ -25,3 +25,13 @@ RSpec/MessageSpies:
 RSpec/NestedGroups:
   # Extra nesting is good, not bad!
   Enabled: false
+
+Style/PercentLiteralDelimiters:
+  # TODO: remove with rubocop >= 0.49
+  PreferredDelimiters:
+    default: "()"
+    "%i": "[]"
+    "%I": "[]"
+    "%r": "{}"
+    "%w": "[]"
+    "%W": "[]"

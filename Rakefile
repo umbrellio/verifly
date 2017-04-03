@@ -16,13 +16,13 @@ ROOT = Pathname.new(__FILE__).join('..')
 
 YARD::Rake::YardocTask.new(:doc) do |t|
   t.files = Dir[ROOT.join('lib/**/*.rb')]
-  t.options = %w(--private)
+  t.options = %w[--private]
 end
 
 RuboCop::RakeTask.new
 RSpec::Core::RakeTask.new(:spec)
 
-task default: %i(rubocop spec doc:coverage)
+task default: %i[rubocop spec doc:coverage]
 
 namespace :doc do
   desc 'checks doc coverage'
