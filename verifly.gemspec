@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.files         = Dir['lib/**/*.rb']
   spec.executables   = []
-  spec.require_paths = %w(lib)
+  spec.require_paths = %w[lib]
 
   spec.add_development_dependency 'pry'
   spec.add_development_dependency 'bundler', '~> 1.14'
