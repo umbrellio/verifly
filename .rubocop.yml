@@ -23,7 +23,7 @@ RSpec/FilePath:
     XVerifier: xverifier
 
 RSpec/MessageSpies:
-  # Spies are not always usable, i.e. we wanna to stub something we haven't create
+  # Spies are not always usable, i.e. we want to stub something we haven't created
   EnforcedStyle: receive
 
 RSpec/NestedGroups:
