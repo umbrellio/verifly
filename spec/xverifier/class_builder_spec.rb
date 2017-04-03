@@ -8,18 +8,18 @@ describe XVerifier::ClassBuilder do
     Class.new { extend XVerifier::ClassBuilder::Mixin }
   end
 
-  let(:unbuildabe) { class_double(klass, build_class: nil) }
+  let(:unbuildable) { class_double(klass, build_class: nil) }
   let(:recursive) { class_double(klass, build_class: buildable) }
   let(:buildable) { class_double(klass) }
 
   describe 'XVerifier::ClassBuilder flow' do
-    subject(:class_builder) { described_class.new([unbuildabe, recursive]) }
+    subject(:class_builder) { described_class.new([unbuildable, recursive]) }
 
     its(:call) { is_expected.to eq buildable }
   end
 
   specify 'XVerifier::ClassBuilder::Mixin#build_class' do
-    klass.buildable_classes = [unbuildabe, recursive]
+    klass.buildable_classes = [unbuildable, recursive]
     expect(klass.build_class).to eq(buildable)
   end
 end

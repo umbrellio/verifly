@@ -2,27 +2,29 @@
 
 module XVerifier
   # @abstract implement `#call`
-  # Applicates objects called `applicable`
-  # (all objects are applicable, this typing made for usage purposes).
+  # Applies "applicable" objects to given bindings
+  # (applicable objects are named based on their use,
+  # currently any object is applicable).
   #
-  # This class uses ClassBuilder subsystem, start with .call method
+  # This class uses ClassBuilder system.
+  # When reading the code, we suggest starting from '.call' method
   # @see ClassBuilder
   # @attr applicable [applicable] wrapped applicable object
   class Applicator
-    # Proxy is used when applicable itself is an Applicator.
-    # It just delegates #call to it
+    # Proxy is used when applicable itself is an instance of Applicator.
+    # It just delegates #call method to applicable
     # @example
     #   Applicator.call(Applicator.build(:foo), binding_, context)
     #   # => Applicator.call(:foo, binding_, context)
     class Proxy < self
       # @param applicable [Applicator]
-      # @return Proxy if applicable is Applicator
+      # @return Proxy if applicable is an instance of Applicator
       # @return [nil] otherwise
       def self.build_class(applicable)
         self if applicable.is_a?(Applicator)
       end
 
-      # @param binding_ [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to apply applicable
       # @param context additional info to send it to applicable
       # @return application result
       def call(binding_, context)
@@ -46,7 +48,7 @@ module XVerifier
         self if applicable.is_a?(Symbol)
       end
 
-      # @param binding_ [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to apply applicable
       # @param context additional info to send it to applicable
       # @return application result
       def call(binding_, context)
@@ -60,7 +62,7 @@ module XVerifier
       private
 
       # When Binding is target, we have to respect both methods and variables
-      # @param binding_ [Binding] target to applicate applicable
+      # @param binding_ [Binding] target to apply applicable
       # @param context additional info to send it to applicable
       # @return application result
       def call_on_binding(binding_, context)
@@ -85,7 +87,7 @@ module XVerifier
         self if applicable.is_a?(String)
       end
 
-      # @param binding_ [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to apply applicable
       # @param context additional info to send it to applicable
       # @return application result
       def call(binding_, context)
@@ -98,7 +100,8 @@ module XVerifier
         end
       end
 
-      # @return [String, Integer] file and line where `Applicator.call` called
+      # @return [String, Integer]
+      #   file and line where `Applicator.call` was called
       def caller_line
         _, file, line = caller(3...4)[0].match(/\A(.+):(\d+):[^:]+\z/).to_a
         [file, Integer(line)]
@@ -120,7 +123,7 @@ module XVerifier
         self if applicable.respond_to?(:to_proc)
       end
 
-      # @param binding_ [#instance_exec] target to applicate applicable
+      # @param binding_ [#instance_exec] target to apply applicable
       # @param context additional info to send it to applicable
       # @return application result
       def call(binding_, context)
@@ -128,7 +131,7 @@ module XVerifier
       end
     end
 
-    # Quoter is used when there is no other way to applicate applicatable.
+    # Quoter is used when there is no other way to apply applicatable.
     # @example
     #   Applicator.call(true, binding_, context) # => true
     class Quoter < self
@@ -145,16 +148,16 @@ module XVerifier
 
     attr_accessor :applicable
 
-    # Applicates applicable on binding_ with context
+    # Applies applicable on binding_ with context
     # @todo add @see #initialize when it's todo done
     # @param applicable [applicable]
-    #   see examples in sublcasses defenitions
+    #   see examples in defenitions of sublcasses
     # @param binding_ [#instance_exec]
     #   where should applicable be applied. It could be either a generic object,
     #   where it would be `instance_exec`uted, or a binding_
     # @param context
     #   geneneric data you want to pass to applicable function.
-    #   If applicable would not accept params, it would not be sent
+    #   If applicable cannot accept params, context will not be sent
     # @return application result
     def self.call(applicable, binding_, context)
       build(applicable).call(binding_, context)
@@ -177,18 +180,18 @@ module XVerifier
 
     # @!method call(binding_, context)
     #   @abstract
-    #   Applicates applicable on binding_ with context
-    #   @param binding_ [#instance_exec] biding would be used in application
-    #   @param context param would be passed if requested
+    #   Applies applicable on binding_ with context
+    #   @param binding_ [#instance_exec] binding to be used for applying
+    #   @param context param that will be passed if requested
     #   @return application result
 
     private
 
-    # invokes lambda basing on it's arity
+    # invokes lambda respecting it's arity
     # @param [Proc] lambda
     # @param binding_ [#instance_exec] binding_ would be used in application
     # @param context param would be passed if lambda arity > 0
-    # @return invokation result
+    # @return invocation result
     def invoke_lambda(lambda, binding_, context)
       if lambda.arity.zero?
         binding_.instance_exec(&lambda)

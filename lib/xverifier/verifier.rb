@@ -8,7 +8,7 @@ module XVerifier
   # @attr model
   #   Generic object to be verified
   # @attr messages [Array]
-  #   Array to collect all messages yielded by verifier
+  #   Array with all messages yielded by the verifier
   class Verifier
     autoload :ApplicatorWithOptionsBuilder,
              'xverifier/verifier/applicator_with_options_builder'

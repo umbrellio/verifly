@@ -4,6 +4,7 @@ describe XVerifier::Applicator do
   subject(:applicator) { described_class.build(applicable) }
 
   let(:binding_class) do
+    # defining #foo to use it with `instance_double`s
     Class.new { define_method(:foo) { |*| } }
   end
 
@@ -65,6 +66,8 @@ describe XVerifier::Applicator do
 
   context 'InstanceEvaluator' do
     let(:applicable) { 'foo' }
+
+    pending '#caller_line specs'
 
     it { is_expected.to be_a XVerifier::Applicator::InstanceEvaluator }
 

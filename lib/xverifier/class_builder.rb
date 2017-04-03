@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
 module XVerifier
-  # ClassBuilder is something like Uber::Builder, but it uses
-  # inverted dependencies. It means, that child classes are
-  # deciding to be or not to be used
+  # ClassBuilder is something like Uber::Builder, but it
+  # allows the child classes to decide whether they will be used.
+  # I find it much more OOPish
   # @attr klasses [Array(Class)]
-  #   klasses to iterate during search of most suitable
+  #   classes to iterate during search of most suitable
   class ClassBuilder
-    # Mixin provides usefull methods to integrate builder subsystem.
+    # Mixin provides useful methods to integrate builder subsystem.
     # Feel free to override or just never include it.
     # @attr_writer [Array(Class)] buildable_classes
-    #   Array of classes which would be checked if they
-    #   suite constructor arguments. Order maters
+    #   Array of classes which will be checked if they
+    #   suite constructor arguments. Order matters
     module Mixin
       # Array of classes which would be checked if they
-      # suite constructor arguments. Order maters
+      # suite constructor arguments. Order matters
       # @param klasses [Array(Class)]
       def buildable_classes=(klasses)
         @class_builder = ClassBuilder.new(klasses).freeze
       end
 
-      # Default implementation if build_class. Feel free to change
+      # Default implementation of build_class. Feel free to change
       # You also have to override it in buildable_classes
       def build_class(*args, &block)
         if @class_builder

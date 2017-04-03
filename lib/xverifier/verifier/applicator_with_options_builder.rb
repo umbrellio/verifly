@@ -2,14 +2,14 @@
 
 module XVerifier
   class Verifier
-    # Builds ApplicatorWithOptions from different invokation styles.
+    # Builds ApplicatorWithOptions from different invocation styles.
     # @api private
     # @attr base [Class]
     #   class for which applicator_with_options should be built
     # @attr args [Array]
-    #   array of arguments invoked with
+    #   array of arguments Verifier.verify invoked with
     # @attr block [Proc]
-    #   block invoked with
+    #   block Verifier.verify invoked with
     ApplicatorWithOptionsBuilder = Struct.new(:base, :args, :block)
     class ApplicatorWithOptionsBuilder
       # @!method self.call(base)
@@ -21,7 +21,7 @@ module XVerifier
         new(base, args, block).call
       end
 
-      # Tries different invokation styles untill one matches
+      # Tries different invocation styles until one matches
       # @see #try_block
       # @see #try_nesting
       # @see #default
@@ -52,7 +52,7 @@ module XVerifier
         verifier, *rest = args
         return unless verifier.is_a?(Class)
         raise ArgumentError, <<~ERROR unless verifier < base
-          Nested verifiers should inherit verifier they nested in
+          Nested verifiers should be inherited from verifier they nested are in
         ERROR
 
         applicable = lambda do |context|
