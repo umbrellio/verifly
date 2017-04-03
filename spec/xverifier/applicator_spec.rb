@@ -13,7 +13,7 @@ describe XVerifier::Applicator do
   let(:result) { instance_double(Object, :result) }
 
   shared_context 'call(context, binding_)' do
-    subject { applicator.call(binding_, context) }
+    subject(:call!) { applicator.call(binding_, context) }
   end
 
   shared_examples 'its call returns result' do
@@ -67,12 +67,29 @@ describe XVerifier::Applicator do
   context 'InstanceEvaluator' do
     let(:applicable) { 'foo' }
 
-    pending '#caller_line specs'
-
     it { is_expected.to be_a XVerifier::Applicator::InstanceEvaluator }
 
     describe 'call(context, binding_)' do
+      shared_examples 'error backtrace points to this file' do
+        subject(:error) do
+          begin
+            call!
+          rescue => e
+            e
+          else
+            raise 'No error raised'
+          end
+        end
+
+        let(:applicable) { 'raise' }
+
+        its(:backtrace) do
+          expect(error.backtrace[0]).to include(__FILE__)
+        end
+      end
+
       include_context 'call(context, binding_)'
+      it_behaves_like 'error backtrace points to this file'
       it { is_expected.to eq(result) }
 
       context 'when applicable = context' do
@@ -85,6 +102,7 @@ describe XVerifier::Applicator do
         let(:binding_) { binding }
         let(:applicable) { '[result, context]' }
 
+        it_behaves_like 'error backtrace points to this file'
         it { is_expected.to eq [result, context] }
 
         context 'when binding_ does not have "context"' do

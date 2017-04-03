@@ -103,7 +103,9 @@ module XVerifier
       # @return [String, Integer]
       #   file and line where `Applicator.call` was called
       def caller_line
-        _, file, line = caller(3...4)[0].match(/\A(.+):(\d+):[^:]+\z/).to_a
+        offset = 2
+        backtace_line = caller(offset..offset)[0]
+        _, file, line = backtace_line.match(/\A(.+):(\d+):[^:]+\z/).to_a
         [file, Integer(line)]
       end
     end
