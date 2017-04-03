@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe XVerifier::Verifier do
-  let(:model) { double(:model) }
-
   subject(:verifier) do
     Class.new(described_class) do
       def message!(*args)
@@ -10,6 +8,8 @@ describe XVerifier::Verifier do
       end
     end
   end
+
+  let(:model) { instance_double(Object, :model) }
 
   describe 'verifiers conditioning' do
     let(:context) { Hash[foo: true] }
@@ -36,7 +36,7 @@ describe XVerifier::Verifier do
   end
 
   describe 'verifiers invocation' do
-    let(:context) { double(:context) }
+    let(:context) { instance_double(Object, :context) }
 
     specify 'with subclass' do
       subclass = Class.new(verifier)
@@ -62,10 +62,20 @@ describe XVerifier::Verifier do
       end
     end
 
-    specify 'with #to_proc' do
-      verifier.verify -> { message!(model) }, if: Hash[context => true]
-      expect(verifier.call(model, context)).to eq [[model]]
-      expect(verifier.call(model, double(:new_context))).to be_empty
+    context 'with #to_proc' do
+      before do
+        verifier.verify -> { message!(model) }, if: Hash[context => true]
+      end
+
+      context 'with same context' do
+        it { expect(verifier.call(model, context)).to eq [[model]] }
+      end
+
+      context 'with different contextes' do
+        let(:new_context) { instance_double(Object, :new_context) }
+
+        it { expect(verifier.call(model, new_context)).to be_empty }
+      end
     end
 
     specify 'with string' do

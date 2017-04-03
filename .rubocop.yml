@@ -1,3 +1,6 @@
+require:
+  - rubocop-rspec
+
 AllCops:
   TargetRubyVersion: 2.3
   Exclude:
@@ -13,4 +16,16 @@ Metrics/BlockLength:
 
 Lint/AmbiguousBlockAssociation:
   # REVIEW: why is that dangerous?
+  Enabled: false
+
+RSpec/FilePath:
+  CustomTransform:
+    XVerifier: xverifier
+
+RSpec/MessageSpies:
+  # Spies are not always usable, i.e. we want to stub something we haven't created
+  EnforcedStyle: receive
+
+RSpec/NestedGroups:
+  # Extra nesting is good, not bad!
   Enabled: false

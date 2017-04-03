@@ -8,14 +8,19 @@ module XVerifier
   # @attr model
   #   Generic object to be verified
   # @attr messages [Array]
-  #   Array to collect all messages yielded by verifier
+  #   Array with all messages yielded by the verifier
   class Verifier
+    autoload :ApplicatorWithOptionsBuilder,
+             'xverifier/verifier/applicator_with_options_builder'
+
     attr_accessor :model, :messages
 
     # @example with block
     #   verify { |context| message!() if context[:foo] }
     # @example with proc
     #   verify -> (context) { message!() if context[:foo] }
+    # @example with hash
+    #  verify -> { message!() } if: { foo: true }
     # @example cotnext could be ommited from lambda params
     #   verify -> { message!() }, if: -> (context) { context[:foo] }
     # @example with symbol
@@ -36,13 +41,15 @@ module XVerifier
     #   call verifier if only block invocation result is falsey
     # @yield context on `#verfify!` calls
     # @return [Array] list of all verifiers already defined
-    def self.verify(verifier = nil, **options, &block)
-      verifiers << [verifier || block, **options]
+    def self.verify(*args, &block)
+      bound_applicators <<
+        ApplicatorWithOptionsBuilder.call(self, *args, &block)
     end
 
-    # @return [Array] List of all verifiers
-    def self.verifiers
-      @verifiers ||= []
+    # @return [Array(ApplicatorWithOptions)]
+    #   List of applicators, bound by .verify
+    def self.bound_applicators
+      @bound_applicators ||= []
     end
 
     # @param model generic model to validate
@@ -58,21 +65,13 @@ module XVerifier
       self.messages = []
     end
 
-    # @todo fix to match style guides
     # @param context context in which model would be valdiated
     # @return [Array] list of messages yielded by verifier
-    def verify!(context = {}) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/LineLength
+    def verify!(context = {})
       self.messages = []
 
-      self.class.verifiers.each do |verifier, options|
-        next unless Applicator.call(options.fetch(:if, true), self, context)
-        next if Applicator.call(options.fetch(:unless, false), self, context)
-
-        if verifier.is_a?(Class) && verifier < self.class
-          messages.concat verifier.call(model, context)
-        else
-          Applicator.call(verifier, self, context)
-        end
+      self.class.bound_applicators.each do |bound_applicator|
+        bound_applicator.call(self, context)
       end
 
       messages
