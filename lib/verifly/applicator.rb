@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module XVerifier
+module Verifly
   # @abstract implement `#call`
   # Applies "applicable" objects to given bindings
   # (applicable objects are named based on their use,

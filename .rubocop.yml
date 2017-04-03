@@ -18,10 +18,6 @@ Lint/AmbiguousBlockAssociation:
   # REVIEW: why is that dangerous?
   Enabled: false
 
-RSpec/FilePath:
-  CustomTransform:
-    XVerifier: xverifier
-
 RSpec/MessageSpies:
   # Spies are not always usable, i.e. we want to stub something we haven't created
   EnforcedStyle: receive

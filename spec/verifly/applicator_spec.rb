@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe XVerifier::Applicator do
+describe Verifly::Applicator do
   subject(:applicator) { described_class.build(applicable) }
 
   let(:binding_class) do
@@ -26,14 +26,14 @@ describe XVerifier::Applicator do
   context 'Proxy' do
     let(:applicable) { described_class.build(result) }
 
-    it { is_expected.to be_a XVerifier::Applicator::Proxy }
+    it { is_expected.to be_a Verifly::Applicator::Proxy }
     it_behaves_like 'its call returns result'
   end
 
   context 'MethodExtractor' do
     let(:applicable) { :foo }
 
-    it { is_expected.to be_a XVerifier::Applicator::MethodExtractor }
+    it { is_expected.to be_a Verifly::Applicator::MethodExtractor }
 
     describe 'call(context, binding_)' do
       include_context 'call(context, binding_)'
@@ -67,7 +67,7 @@ describe XVerifier::Applicator do
   context 'InstanceEvaluator' do
     let(:applicable) { 'foo' }
 
-    it { is_expected.to be_a XVerifier::Applicator::InstanceEvaluator }
+    it { is_expected.to be_a Verifly::Applicator::InstanceEvaluator }
 
     describe 'call(context, binding_)' do
       shared_examples 'error backtrace points to this file' do
@@ -118,7 +118,7 @@ describe XVerifier::Applicator do
   context 'ProcApplicatior' do
     let(:applicable) { -> { foo } }
 
-    it { is_expected.to be_a XVerifier::Applicator::ProcApplicatior }
+    it { is_expected.to be_a Verifly::Applicator::ProcApplicatior }
 
     describe 'call(context, binding_)' do
       include_context 'call(context, binding_)'
@@ -135,7 +135,7 @@ describe XVerifier::Applicator do
   context 'Quoter' do
     let(:applicable) { result }
 
-    it { is_expected.to be_a XVerifier::Applicator::Quoter }
+    it { is_expected.to be_a Verifly::Applicator::Quoter }
     it_behaves_like 'its call returns result'
   end
 end

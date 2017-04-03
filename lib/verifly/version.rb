@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-module XVerifier
-  # Specifies XVerifier version
+module Verifly
+  # Specifies Verifly version
   #
   # Semantical naming: 0.a.b.c where
   # * 0 is for unreleased

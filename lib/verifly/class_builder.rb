@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module XVerifier
+module Verifly
   # ClassBuilder is something like Uber::Builder, but it
   # allows the child classes to decide whether they will be used.
   # I find it much more OOPish

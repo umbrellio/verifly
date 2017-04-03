@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module XVerifier
+module Verifly
   # Verifier is a proto-validator class, which allows to
   # use generic messages formats (instead of errors, which are raw text)
   # @abstract
@@ -11,7 +11,7 @@ module XVerifier
   #   Array with all messages yielded by the verifier
   class Verifier
     autoload :ApplicatorWithOptionsBuilder,
-             'xverifier/verifier/applicator_with_options_builder'
+             'verifly/verifier/applicator_with_options_builder'
 
     attr_accessor :model, :messages
 

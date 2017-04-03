@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module XVerifier
+module Verifly
   class Verifier
     # Builds ApplicatorWithOptions from different invocation styles.
     # @api private
