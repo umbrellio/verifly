@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe XVerifier::ApplicatorWithOptions do
+describe Verifly::ApplicatorWithOptions do
   subject(:applicator_with_options) do
     described_class.new(action, if: if_condition, unless: unless_condition)
   end

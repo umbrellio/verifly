@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe XVerifier::Verifier do
+describe Verifly::Verifier do
   subject(:verifier) do
     Class.new(described_class) do
       def message!(*args)

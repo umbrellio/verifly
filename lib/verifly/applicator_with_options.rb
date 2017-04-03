@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module XVerifier
+module Verifly
   # An applicator with useful options
   # @example if
   #   ApplicatorWithOptions.new(action, if: true)

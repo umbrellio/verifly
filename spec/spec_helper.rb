@@ -7,7 +7,7 @@ require 'rspec/its'
 
 require 'coveralls'
 Coveralls.wear!
-require 'xverifier'
+require 'verifly'
 
 RSpec.configure do |config|
   config.default_formatter = 'doc' if config.files_to_run.one?
@@ -18,5 +18,5 @@ RSpec.configure do |config|
 end
 
 def applicator(applicable)
-  XVerifier::Applicator.build(applicable)
+  Verifly::Applicator.build(applicable)
 end

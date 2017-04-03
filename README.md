@@ -1,6 +1,6 @@
-# XVerifier v0.1
-[![Build Status](https://travis-ci.org/umbrellio/xverifier.svg?branch=master)]
-(https://travis-ci.org/umbrellio/xverifier)
+# Verifly v0.1
+[![Build Status](https://travis-ci.org/umbrellio/verifly.svg?branch=master)]
+(https://travis-ci.org/umbrellio/verifly)
 
 This gem consists of several dependent components, which all could be
 used standalone. The most important one is [Verifier](#Verifier),
@@ -15,7 +15,7 @@ example:
 
 ```lang=ruby
 Abstract = Struct.new(:data)
-  extend XVerifier::ClassBuilder::Mixin
+  extend Verifly::ClassBuilder::Mixin
 
   class WithString < self
     def self.build_class(x)
@@ -50,7 +50,7 @@ So to use it you have to:
 
 1. Write some classes with duck type `.class_builder(*args)`
 
-2. Invoke `XVerifier::ClassBuilder.new([<%= array_of_classes %>]).call(*args)`
+2. Invoke `Verifly::ClassBuilder.new([<%= array_of_classes %>]).call(*args)`
 
 3. ????
 
@@ -61,7 +61,7 @@ following:
 
 1. Write an abstract class
 
-2. Extend `XVerifier::ClassBuilder::Mixin`
+2. Extend `Verifly::ClassBuilder::Mixin`
 
 3. Inherit abstract class in different implementations
 
@@ -139,7 +139,7 @@ Procedures should call `message!` if they want to yield something.
 Note, that you should implement `message!` by yourself (in terms of super)
 
 ```lang=ruby
-class MyVerifier < XVerifier::Verifier
+class MyVerifier < Verifly::Verifier
   Message = Struct.new(:text)
   verify :foo, if: { foo: true }
 
@@ -159,7 +159,7 @@ In addition to Applicator power, you also can nest your verifiers
 to split some logic
 
 ```lang=ruby
-class MyVerifier < XVerifier::Verifier
+class MyVerifier < Verifly::Verifier
   Message = Struct.new(:text)
   verify ChildVerifier, if: -> (context) { cotnext[:foo] }
 

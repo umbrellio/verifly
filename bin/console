@@ -2,6 +2,6 @@
 
 require 'bundler/setup'
 require 'pry'
-require 'xverifier'
+require 'verifly'
 
 Pry.start
