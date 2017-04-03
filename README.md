@@ -9,6 +9,18 @@ but understanding of [Applicator](#Applicator) and
 The least one, [ClassBuilder](#ClassBuilder) only used in private APIs,
 but it's own API also public
 
+## Instalation
+
+```
+$ gem install verifly
+```
+
+and then in code
+
+```
+require 'verifly'
+```
+
 ## ClassBuilder
 
 example:
