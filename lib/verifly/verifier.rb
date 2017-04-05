@@ -80,7 +80,8 @@ module Verifly
     private
 
     # @abstract
-    #   implementation example: `super { Message.new(status, text, description) }`
+    #   implementation example:
+    #   `super { Message.new(status, text, description) }`
     # @return new message (yield result)
     def message!(*)
       new_message = yield
