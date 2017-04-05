@@ -9,25 +9,25 @@ module Verifly
   # @attr action [Applicator]
   #   main action to apply on call
   # @attr if_condition [Applicator]
-  #   main action only apply if this applies to truthy value
+  #   main action only apply if condition evaluates to truthy value
   # @attr unless_condition [Applicator]
-  #   main action only apply if this applies to falsey value
+  #   main action only apply if condition evaluates to falsey value
   class ApplicatorWithOptions
     attr_accessor :action, :if_condition, :unless_condition
 
     # @param action [applicable] main action
     # @option options [applicable] :if
-    #   main action only apply if this applies to truthy value
+    #   main action is only applied if this evaluates to truthy value
     # @option options [applicable] :unless
-    #   main action only apply if this applies to falsey value
+    #   main action is only applied if this evaluates to falsey value
     def initialize(action, **options)
       self.action = Applicator.build(action)
       self.if_condition = Applicator.build(options.fetch(:if, true))
       self.unless_condition = Applicator.build(options.fetch(:unless, false))
     end
 
-    # Applies main action if if_condition applyd to truthy value
-    # and unless_condition applyd to falsey value
+    # Applies main action if if_condition is evaluated to truthy value
+    # and unless_condition is evaluated to falsey value
     # @param binding_ [#instance_exec]
     #   binding to apply (see Applicator)
     # @param context

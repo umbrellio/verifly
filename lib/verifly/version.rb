@@ -3,10 +3,10 @@
 module Verifly
   # Specifies Verifly version
   #
-  # Semantical naming: 0.a.b.c where
-  # * 0 is for unreleased
-  # * a is for public api changes
-  # * b is for private api changes
-  # * c is for changes, not changing private api
+  # Semantic versioning: 0.a.b.c where
+  # * 0 stands for unreleased
+  # * a stands for public api changes
+  # * b stands for private api changes
+  # * c stands for patch changes (not touching public or private api)
   VERSION = '0.1.0.0'
 end
