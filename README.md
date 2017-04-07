@@ -4,10 +4,10 @@
 
 This gem consists of several dependent components, which all could be
 used standalone. The most important one is [Verifier](#Verifier),
-but understanding of [Applicator](#Applicator) and
-[ApplicatorWithOptions](#ApplicatorWithOptions) helps understand it's API.
-The least one, [ClassBuilder](#ClassBuilder) only used in private APIs,
-but it's own API also public
+but understanding [Applicator](#Applicator) and
+[ApplicatorWithOptions](#ApplicatorWithOptions) helps understand its API.
+The least important one, [ClassBuilder](#ClassBuilder), is only used in private APIs,
+but its own API is public
 
 ## Instalation
 
@@ -38,7 +38,7 @@ Abstract = Struct.new(:data)
   Generic = Class.new(self)
 
   self.buildable_classes = [WithString, Generic]
-  # or, vise versa
+  # or, vice versa
   def self.buildable_classes
     [WithString, Generic]
   end
@@ -52,13 +52,12 @@ or see lib/verifier/applicator.rb
 
 Why don't just use Uber::Builder?
 ([Uber](https://github.com/apotonick/uber) is cool, you should try it)
-There are two reasons: firstly, it is unnecessary dependency.
-We dont want npm hell, aren't we? Uber::Builder realy does not do much work,
-it's just a pattern. Secondly, this implementation looks for me
-to be more clear, because children instead of parent are deciding would
-they handle arguments.
+There are two reasons: firstly, it is an unnecessary dependency.
+We dont want npm hell, do we? Uber::Builder realy does not do much work,
+it's just a pattern. Secondly, this implementation looks more clear to me,
+because children are deciding whether they will handle arguments, not parents.
 
-So to use it you have to:
+So to use it, you have to:
 
 1. Write some classes with duck type `.class_builder(*args)`
 
@@ -68,24 +67,24 @@ So to use it you have to:
 
 4. PROFIT
 
-It's simple and clear, but not very sugarish. So, otherwise, you may do
+It's simple and clear, but not very sugary. So, otherwise, you may do
 following:
 
 1. Write an abstract class
 
 2. Extend `Verifly::ClassBuilder::Mixin`
 
-3. Inherit abstract class in different implementations
+3. Inherit from the abstract class in different implementations
 
 4. If some implementations have common ancestors
-(not including abstract class), you can implement common ancestor's
+(not including the abstract class), you can implement common ancestor's
 `.build_class` in terms of super (i.e.
 `def self.build_class(x); super if x.is_a?(String); end`)
 
 5. Change `.build_class` of other classes like `self if ...`.
 Don't change default implementation's `.build_class`
 
-6. Setup `.buildable_classes` on abstract class, mention only direct chldren
+6. Setup `.buildable_classes` on the abstract class, mentioning only direct chldren
 if you done step 4
 
 7. Optionally redefine `.build` in abstract class, if you want
@@ -95,9 +94,9 @@ to separate `build_class` and constructor params
 
 ## Applicator
 
-Applicator is designed to wrap applying of
+Applicator is designed to wrap applications of
 [applicable](https://en.wikipedia.org/wiki/Sepulka) objects
-to some binding in some context
+around some binding in some context
 
 example:
 
@@ -115,15 +114,15 @@ Applicator.call(:foo, binding, {}) # => :bar
 Applicator.call('object.foo', binding, {}) # => :bar
 ```
 
-Applicator is good, but in most case
-[ApplicatorWithOptions](#ApplicatorWithOptions) would be better solution.
+Applicator is good, but in most cases
+[ApplicatorWithOptions](#ApplicatorWithOptions) would be a better option.
 
 ## ApplicatorWithOptions
 
 ApplicatorWithOptions is an applicator with options.
 The options are `if: ` and `unless: `. Same as in ActiveModel::Validations,
-they are applied to same binding and main action would be executed
-if `if: ` evaluates to truthy and `unless: ` evaluates to falsey
+they are applied to the same binding. Main action is executed
+only if `if: ` evaluates to truthy and `unless: ` evaluates to falsey.
 
 See examples:
 
@@ -145,10 +144,10 @@ ApplicatorWithOptions.new(:foo, unless: { bar: true })
 
 ## Verifier
 
-The last but most interesting component is Verifier.
+The last, but the most interesting component is Verifier.
 Verifiers use ApplciatorWithOptions to execute generic procedures.
 Procedures should call `message!` if they want to yield something.
-Note, that you should implement `message!` by yourself (in terms of super)
+Note that you should implement `message!` by yourself (in terms of super)
 
 ```lang=ruby
 class MyVerifier < Verifly::Verifier
@@ -167,8 +166,8 @@ class MyVerifier < Verifly::Verifier
 end
 ```
 
-In addition to Applicator power, you also can nest your verifiers
-to split some logic
+In addition to Applicator's power, you also can nest your verifiers
+to split the logic
 
 ```lang=ruby
 class MyVerifier < Verifly::Verifier

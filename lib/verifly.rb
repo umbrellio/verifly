@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-# Verifly provides several usefull classes, but most important
-# is Verifier. Other provided classes are it's dependency.
-# See README.md or their own documentation for more info about usage
+# Verifly provides several useful classes, but Verifier is the most
+# important one, while others depend on it.
+# See README.md or in-code documentation for more info.
 module Verifly
   autoload :VERSION, 'verifly/version'
 

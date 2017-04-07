@@ -7,9 +7,9 @@ module Verifly
     # @attr base [Class]
     #   class for which applicator_with_options should be built
     # @attr args [Array]
-    #   array of arguments Verifier.verify invoked with
+    #   array of arguments to Verifier.verify was invoked with
     # @attr block [Proc]
-    #   block Verifier.verify invoked with
+    #   block to invoke Verifier.verify with
     ApplicatorWithOptionsBuilder = Struct.new(:base, :args, :block)
     class ApplicatorWithOptionsBuilder
       # @!method self.call(base)

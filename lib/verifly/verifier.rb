@@ -15,32 +15,32 @@ module Verifly
 
     attr_accessor :model, :messages
 
-    # @example with block
+    # @example with a block
     #   verify { |context| message!() if context[:foo] }
-    # @example with proc
+    # @example with a proc
     #   verify -> (context) { message!() if context[:foo] }
-    # @example with hash
+    # @example with a hash
     #  verify -> { message!() } if: { foo: true }
-    # @example cotnext could be ommited from lambda params
+    # @example context can be provided as a lambda param
     #   verify -> { message!() }, if: -> (context) { context[:foo] }
-    # @example with symbol
+    # @example with a symbol
     #   verify :foo, if: :bar
     #   # calls #foo if #bar is true
-    #   # bar could either accept context or not
-    # @example with string
+    #   # bar can accept context if desired
+    # @example with a string
     #  verify 'message!() if context[:foo]'
     #  verify 'message!()', if: 'context[:foo]'
-    # @example with descedant
+    # @example with a descedant
     #   verify DescendantClass
-    #   # calls DescendantClass.call(model, context) and merges it's messages
+    #   # calls DescendantClass.call(model, context) and merges its messages
     # @param verifier [#to_proc|Symbol|String|Class|nil]
     #   verifier defenition, see examples
     # @option options [#to_proc|Symbol|String|nil] if (true)
-    #   call verifier if only block invocation result is truthy
+    #   call verifier only if block invocation result is truthy
     # @option options [#to_proc|Symbol|String|nil] unless (false)
-    #   call verifier if only block invocation result is falsey
-    # @yield context on `#verfify!` calls
-    # @return [Array] list of all verifiers already defined
+    #   call verifier only if block invocation result is falsey
+    # @yield context on `#verify!` calls
+    # @return [Array] list of all defined verifiers
     def self.verify(*args, &block)
       bound_applicators <<
         ApplicatorWithOptionsBuilder.call(self, *args, &block)
@@ -53,8 +53,8 @@ module Verifly
     end
 
     # @param model generic model to validate
-    # @param context context in which it would be valdiated
-    # @return [Array] list of messages yielded by verifier
+    # @param context context in which it is valdiated
+    # @return [Array] list of messages yielded by the verifier
     def self.call(model, context = {})
       new(model).verify!(context)
     end
@@ -65,8 +65,8 @@ module Verifly
       self.messages = []
     end
 
-    # @param context context in which model would be valdiated
-    # @return [Array] list of messages yielded by verifier
+    # @param context context in which model is valdiated
+    # @return [Array] list of messages yielded by the verifier
     def verify!(context = {})
       self.messages = []
 
@@ -80,7 +80,8 @@ module Verifly
     private
 
     # @abstract
-    #   implement it like `super { Message.new(status, text, description) }`
+    #   implementation example:
+    #   `super { Message.new(status, text, description) }`
     # @return new message (yield result)
     def message!(*)
       new_message = yield

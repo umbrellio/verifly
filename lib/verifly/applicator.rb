@@ -33,7 +33,7 @@ module Verifly
     end
 
     # MethodExtractor is used when applicable is a symbol.
-    # It extracts extracts method from binding_ and executes it on binding_
+    # It extracts a method from binding_ and executes it on binding_
     # (so it works just like send except it sends nothing
     # when method arity is zero).
     # @example
@@ -42,14 +42,14 @@ module Verifly
     #   # or => User.new.foo, if it does not accept context
     class MethodExtractor < self
       # @param applicable [Symbol]
-      # @return MethodExtractor if applicable is Symbol
+      # @return MethodExtractor if applicable is a Symbol
       # @return [nil] otherwise
       def self.build_class(applicable)
         self if applicable.is_a?(Symbol)
       end
 
-      # @param binding_ [#instance_exec] target to apply applicable
-      # @param context additional info to send it to applicable
+      # @param binding_ [#instance_exec] target to apply applicable to
+      # @param context additional info to send to applicable
       # @return application result
       def call(binding_, context)
         if binding_.is_a?(Binding)
@@ -61,9 +61,9 @@ module Verifly
 
       private
 
-      # When Binding is target, we have to respect both methods and variables
-      # @param binding_ [Binding] target to apply applicable
-      # @param context additional info to send it to applicable
+      # When Binding is a target, we have to respect both methods and variables
+      # @param binding_ [Binding] target to apply applicable to
+      # @param context additional info to send to applicable
       # @return application result
       def call_on_binding(binding_, context)
         if binding_.receiver.respond_to?(applicable)
@@ -74,21 +74,21 @@ module Verifly
       end
     end
 
-    # InstanceEvaluator is used for string. It works like instance_eval or
+    # InstanceEvaluator is used for strings. It works like instance_eval or
     # Binding#eval depending on binding_ class
     # @example
     #   Applicator.call('foo if context[:foo]', binding_, context)
     #   # => foo if context[:foo]
     class InstanceEvaluator < self
       # @param applicable [String]
-      # @return InstanceEvaluator if applicable is String
+      # @return InstanceEvaluator if applicable is a String
       # @return [nil] otherwise
       def self.build_class(applicable)
         self if applicable.is_a?(String)
       end
 
-      # @param binding_ [#instance_exec] target to apply applicable
-      # @param context additional info to send it to applicable
+      # @param binding_ [#instance_exec] target to apply applicable to
+      # @param context additional info to send to applicable
       # @return application result
       def call(binding_, context)
         if binding_.is_a?(Binding)
@@ -111,10 +111,10 @@ module Verifly
     end
 
     # ProcApplicatior is used when #to_proc is available.
-    # It works not just with procs, but also with hashes etc
-    # @example with proc
+    # It works not only with procs, but also with hashes etc
+    # @example with a proc
     #   Applicator.call(-> { foo }, binding_, context) # => foo
-    # @example with hash
+    # @example with a hash
     #   Applicator.call(Hash[foo: true], binding_, :foo) # => true
     #   Applicator.call(Hash[foo: true], binding_, :bar) # => nil
     class ProcApplicatior < self
@@ -125,8 +125,8 @@ module Verifly
         self if applicable.respond_to?(:to_proc)
       end
 
-      # @param binding_ [#instance_exec] target to apply applicable
-      # @param context additional info to send it to applicable
+      # @param binding_ [#instance_exec] target to apply applicable to
+      # @param context additional info to send to applicable
       # @return application result
       def call(binding_, context)
         invoke_lambda(applicable.to_proc, binding_, context)
@@ -151,9 +151,9 @@ module Verifly
     attr_accessor :applicable
 
     # Applies applicable on binding_ with context
-    # @todo add @see #initialize when it's todo done
+    # @todo add @see #initialize when its todo is done
     # @param applicable [applicable]
-    #   see examples in defenitions of sublcasses
+    #   see examples in definitions of subclasses
     # @param binding_ [#instance_exec]
     #   where should applicable be applied. It could be either a generic object,
     #   where it would be `instance_exec`uted, or a binding_
@@ -168,7 +168,7 @@ module Verifly
     # Always use build instead of new
     # @todo add more examples right here
     # @param applicable [applicable]
-    #   see examples in sublcasses defenitions
+    #   see examples in definitions of sublclasses
     # @api private
     def initialize(applicable)
       self.applicable = applicable
@@ -189,7 +189,7 @@ module Verifly
 
     private
 
-    # invokes lambda respecting it's arity
+    # invokes lambda respecting its arity
     # @param [Proc] lambda
     # @param binding_ [#instance_exec] binding_ would be used in application
     # @param context param would be passed if lambda arity > 0
