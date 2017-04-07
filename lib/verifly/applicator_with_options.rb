@@ -15,12 +15,19 @@ module Verifly
   class ApplicatorWithOptions
     attr_accessor :action, :if_condition, :unless_condition
 
+    # @!method initialize(action = block, options = {}, &block)
     # @param action [applicable] main action
     # @option options [applicable] :if
     #   main action is only applied if this evaluates to truthy value
     # @option options [applicable] :unless
     #   main action is only applied if this evaluates to falsey value
-    def initialize(action, **options)
+    # @raise [ArgumentError] if there is more than two arguments and block
+    # @raise [ArgumentError] if there is zero arguments and no block
+    def initialize(*args, &block)
+      action, options, *rest = block ? [block, *args] : args
+      options ||= {}
+      raise ArgumentError unless action && rest.empty?
+
       self.action = Applicator.build(action)
       self.if_condition = Applicator.build(options.fetch(:if, true))
       self.unless_condition = Applicator.build(options.fetch(:unless, false))

@@ -15,6 +15,7 @@ module Verifly
 
     attr_accessor :model, :messages
 
+    # @!method self.verify(action = block, options = {}, &block)
     # @example with a block
     #   verify { |context| message!() if context[:foo] }
     # @example with a proc
@@ -30,20 +31,38 @@ module Verifly
     # @example with a string
     #  verify 'message!() if context[:foo]'
     #  verify 'message!()', if: 'context[:foo]'
-    # @example with a descedant
-    #   verify DescendantClass
-    #   # calls DescendantClass.call(model, context) and merges its messages
-    # @param verifier [#to_proc|Symbol|String|Class|nil]
+    # @param action [#to_proc|Symbol|String|nil]
     #   verifier defenition, see examples
     # @option options [#to_proc|Symbol|String|nil] if (true)
     #   call verifier only if block invocation result is truthy
     # @option options [#to_proc|Symbol|String|nil] unless (false)
     #   call verifier only if block invocation result is falsey
-    # @yield context on `#verify!` calls
+    # @yield [context] yields on `#verfify!` calls
+    # @raise [ArgumentError] if there is more than two arguments and block
+    # @raise [ArgumentError] if there is zero arguments and no block
     # @return [Array] list of all defined verifiers
     def self.verify(*args, &block)
-      bound_applicators <<
-        ApplicatorWithOptionsBuilder.call(self, *args, &block)
+      bound_applicators << ApplicatorWithOptions.new(*args, &block)
+    end
+
+    # Calls DescendantClass.call(model, context) and merges its messages.
+    # DescendantClass should be a descendant of current class
+    # @param name [String, Class]
+    #   name of descendant class or descendant class itself
+    # @option options [#to_proc|Symbol|String|nil] if (true)
+    #   call verifier if only block invocation result is truthy
+    # @option options [#to_proc|Symbol|String|nil] unless (false)
+    #   call verifier if only block invocation result is falsey
+    # @return [Array] list of all verifiers already defined
+    def self.verify_with(name, options = {})
+      verify(options) do |context|
+        verifier = name.is_a?(String) ? Object.const_get(name, false) : name
+        raise ArgumentError, <<~ERROR unless verifier < self.class
+          Nested verifiers should be inherited from verifier they nested are in
+        ERROR
+
+        messages.concat(verifier.call(model, context))
+      end
     end
 
     # @return [Array(ApplicatorWithOptions)]

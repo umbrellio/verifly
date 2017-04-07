@@ -1,6 +1,5 @@
-# Verifly v0.1
-[![Build Status](https://travis-ci.org/umbrellio/verifly.svg?branch=master)]
-(https://travis-ci.org/umbrellio/verifly)
+# Verifly v0.2
+[![Build Status](https://travis-ci.org/umbrellio/verifly.svg?branch=master)](https://travis-ci.org/umbrellio/verifly)
 
 This gem consists of several dependent components, which all could be
 used standalone. The most important one is [Verifier](#Verifier),
@@ -172,7 +171,7 @@ to split the logic
 ```lang=ruby
 class MyVerifier < Verifly::Verifier
   Message = Struct.new(:text)
-  verify ChildVerifier, if: -> (context) { cotnext[:foo] }
+  verify_with ChildVerifier, if: -> (context) { cotnext[:foo] }
 
   private
 

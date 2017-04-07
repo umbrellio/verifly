@@ -41,7 +41,7 @@ describe Verifly::Verifier do
     specify 'with subclass' do
       subclass = Class.new(verifier)
       subclass.verify { |context| message!(context) }
-      verifier.verify(subclass)
+      verifier.verify_with(subclass)
       expect(verifier.call(model, context)).to eq [[context]]
     end
 
