@@ -1,12 +1,13 @@
 # Verifly v0.2
 [![Build Status](https://travis-ci.org/umbrellio/verifly.svg?branch=master)](https://travis-ci.org/umbrellio/verifly)
 
-This gem consists of several dependent components, which all could be
-used standalone. The most important one is [Verifier](#Verifier),
-but understanding [Applicator](#Applicator) and
-[ApplicatorWithOptions](#ApplicatorWithOptions) helps understand its API.
-The least important one, [ClassBuilder](#ClassBuilder), is only used in private APIs,
-but its own API is public
+This gem provides an api to run sequential checks like
+'ActiveModel::Validations' do, but with generic messages instead of errors.
+
+It also provides additional components to build it which could be used
+to imporve code readability. See [Applicator](#Applicator),
+[ApplicatorWithOptions](#ApplicatorWithOptions) and
+[ClassBuilder](#ClassBuilder) along with [Verifier](#Verifier)
 
 ## Instalation
 
@@ -47,7 +48,7 @@ Abstract.build("foo") # => WithString.new("foo")
 Abstract.build(:foo) # => Generic.new("foo")
 ```
 
-or see lib/verifier/applicator.rb
+or see it at rubydoc.info
 
 Why don't just use Uber::Builder?
 ([Uber](https://github.com/apotonick/uber) is cool, you should try it)
@@ -83,8 +84,8 @@ following:
 5. Change `.build_class` of other classes like `self if ...`.
 Don't change default implementation's `.build_class`
 
-6. Setup `.buildable_classes` on the abstract class, mentioning only direct chldren
-if you done step 4
+6. Setup `.buildable_classes` on the abstract class, mentioning only direct
+children if you done step 4
 
 7. Optionally redefine `.build` in abstract class, if you want
 to separate `build_class` and constructor params
@@ -184,3 +185,9 @@ class ChildVerifier < MyVerifier
   verify %q(message!("it's alive!"))
 end
 ```
+
+## Yard documentation
+
+This gem uses yard to generate documentation about its API.
+Visit http://www.rubydoc.info/github/umbrellio/verifly/master to see
+actual documentation for master.
