@@ -12,18 +12,22 @@ Gem::Specification.new do |spec|
   spec.email = ['begdory4@gmail.com']
 
   spec.summary = <<~SUMMARY.gsub(/\s+/, ' ')
-    An api to run sequential checks like 'ActiveModel::Validations'
-    do, but with generic messages instead of errors
+    See more info at
+    [http://www.rubydoc.info/gems/verifly/#{Verifly::VERSION}]
   SUMMARY
 
   spec.description = <<~DESCRIPTION.gsub(/\s+/, ' ')
-    See more info at
-    http://www.rubydoc.info/gems/verifly/#{Verifly::VERSION}
+    An api to run sequential checks like 'ActiveModel::Validations'
+    do, but with generic messages instead of errors.
+    #{spec.summary}
   DESCRIPTION
+
   spec.homepage = 'https://github.com/umbrellio/verifly'
   spec.license = 'MIT'
 
   spec.files = Dir['lib/**/*.rb']
+  spec.files << 'README.md'
+
   spec.executables = []
   spec.require_paths = %w[lib]
 
