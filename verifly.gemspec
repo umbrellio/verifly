@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
 
   spec.summary = <<~SUMMARY.gsub(/\s+/, ' ')
     See more info at
-    [http://www.rubydoc.info/gems/verifly/#{Verifly::VERSION}]
+    https://www.rubydoc.info/gems/verifly/#{Verifly::VERSION}
   SUMMARY
 
   spec.description = <<~DESCRIPTION.gsub(/\s+/, ' ')
