@@ -13,9 +13,9 @@ Style/Documentation:
 Metrics/BlockLength:
   Exclude:
     - spec/**/*_spec.rb
+    - verifly.gemspec
 
 Lint/AmbiguousBlockAssociation:
-  # REVIEW: why is that dangerous?
   Enabled: false
 
 RSpec/MessageSpies:
