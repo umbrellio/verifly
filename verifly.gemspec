@@ -27,6 +27,9 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir['lib/**/*.rb']
   spec.files << 'README.md'
+  # You can also add the following to your .gemspec to have YARD
+  # document your gem on install
+  spec.metadata['yard.run'] = 'yri'
 
   spec.executables = []
   spec.require_paths = %w[lib]
