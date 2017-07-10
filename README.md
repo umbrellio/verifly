@@ -1,5 +1,5 @@
 # Verifly v0.2
-[![Build Status](https://travis-ci.org/umbrellio/verifly.svg?branch=master)](https://travis-ci.org/umbrellio/verifly)
+[![Build Status](https://travis-ci.org/umbrellio/verifly.svg?branch=master)](https://travis-ci.org/umbrellio/verifly)[![Coverage Status](https://coveralls.io/repos/github/umbrellio/verifly/badge.svg)](https://coveralls.io/github/umbrellio/verifly)
 
 This gem provides an api to run sequential checks like
 'ActiveModel::Validations' do, but with generic messages instead of errors.
