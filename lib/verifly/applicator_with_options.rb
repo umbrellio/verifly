@@ -24,9 +24,7 @@ module Verifly
     # @raise [ArgumentError] if there is more than two arguments and block
     # @raise [ArgumentError] if there is zero arguments and no block
     def initialize(*args, &block)
-      action, options, *rest = block ? [block, *args] : args
-      options ||= {}
-      raise ArgumentError unless action && rest.empty?
+      action, options = normalize_options(*args, &block)
 
       self.action = Applicator.build(action)
       self.if_condition = Applicator.build(options.fetch(:if, true))
@@ -41,10 +39,20 @@ module Verifly
     #   generic context to apply (see Applicator)
     # @return main action application result
     # @return [nil] if condition checks failed
-    def call(binding_, context)
-      return unless if_condition.call(binding_, context)
-      return if unless_condition.call(binding_, context)
-      action.call(binding_, context)
+    def call(binding_, *context)
+      return unless if_condition.call(binding_, *context)
+      return if unless_condition.call(binding_, *context)
+      action.call(binding_, *context)
+    end
+
+    private
+
+    def normalize_options(*args, &block)
+      action, options, *rest = block ? [block, *args] : args
+      options ||= {}
+      raise ArgumentError unless action && rest.empty?
+
+      [action, options]
     end
   end
 end

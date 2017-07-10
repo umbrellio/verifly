@@ -79,7 +79,7 @@ describe Verifly::Verifier do
     end
 
     specify "with string" do
-      verifier.verify "message!(context)"
+      verifier.verify "message!(context[0])"
       expect(verifier.call(model, context)).to eq [[context]]
     end
 

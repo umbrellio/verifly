@@ -104,21 +104,21 @@ describe Verifly::Applicator do
       it { is_expected.to eq(result) }
 
       context "when applicable = context" do
-        let(:applicable) { "context" }
+        let(:applicable) { "context[0]" }
 
         it { is_expected.to eq(context) }
       end
 
       context "when binding_ is a Binding" do
         let(:binding_) { binding }
-        let(:applicable) { "[result, context]" }
+        let(:applicable) { "[result, context[0]]" }
 
         it_behaves_like "error backtrace points to this file"
         it { is_expected.to eq [result, context] }
 
         context 'when binding_ does not have "context"' do
           let(:binding_) { Object.new.send(:binding) }
-          let(:applicable) { "context" }
+          let(:applicable) { "context[0]" }
 
           it { is_expected.to eq(context) }
         end

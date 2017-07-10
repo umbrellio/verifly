@@ -9,5 +9,6 @@ module Verifly
   autoload :Applicator, "verifly/applicator"
   autoload :ApplicatorWithOptions, "verifly/applicator_with_options"
   autoload :ClassBuilder, "verifly/class_builder"
+  autoload :DependentCallbacks, "verifly/dependent_callbacks"
   autoload :Verifier, "verifly/verifier"
 end

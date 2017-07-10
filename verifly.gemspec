@@ -35,6 +35,7 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.require_paths = %w[lib]
 
   spec.required_ruby_version = "~> 2.3"
+
   spec.add_development_dependency "pry", "~> 0.10"
   spec.add_development_dependency "bundler", "~> 1.14"
   spec.add_development_dependency "rake", "~> 10.5"
@@ -43,6 +44,8 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_development_dependency "launchy", "~> 2.4"
   spec.add_development_dependency "coveralls", "~> 0.8.19"
   spec.add_development_dependency "rspec-its", "~> 1.1"
+
+  spec.add_development_dependency "activesupport" # Fot integration tests
 
   spec.add_development_dependency "rubocop-config-umbrellio", "~> 0.49"
 end

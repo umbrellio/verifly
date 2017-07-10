@@ -65,7 +65,7 @@ module Verifly
       end
     end
 
-    # @return [Array(ApplicatorWithOptions)]
+    # @return [[ApplicatorWithOptions]]
     #   List of applicators, bound by .verify
     def self.bound_applicators
       @bound_applicators ||= []

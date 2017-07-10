@@ -4,18 +4,18 @@ module Verifly
   # ClassBuilder is similar to Uber::Builder, but it
   # allows child classes to decide whether they will be used.
   # I find it much more object-oriented
-  # @attr klasses [Array(Class)]
+  # @attr klasses [[Class]]
   #   classes to iterate during search of most suitable
   class ClassBuilder
     # Mixin provides useful methods to integrate into builder subsystem.
     # Feel free to override or just never include it.
-    # @attr_writer [Array(Class)] buildable_classes
+    # @attr_writer [[Class]] buildable_classes
     #   Array of classes which will be checked if they
     #   suite constructor arguments. Order matters
     module Mixin
       # Array of classes which will be checked if they
       # suite constructor arguments. Order matters
-      # @param klasses [Array(Class)]
+      # @param klasses [[Class]]
       def buildable_classes=(klasses)
         @class_builder = ClassBuilder.new(klasses).freeze
       end
@@ -40,7 +40,7 @@ module Verifly
 
     attr_accessor :klasses
 
-    # @param klasses [Array(Classes)]
+    # @param klasses [[Class]]
     def initialize(klasses)
       self.klasses = klasses
     end

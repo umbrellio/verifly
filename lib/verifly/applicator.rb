@@ -14,8 +14,8 @@ module Verifly
     # Proxy is used when applicable itself is an instance of Applicator.
     # It just delegates #call method to applicable
     # @example
-    #   Applicator.call(Applicator.build(:foo), binding_, context)
-    #   # => Applicator.call(:foo, binding_, context)
+    #   Applicator.call(Applicator.build(:foo), binding_, *context)
+    #   # => Applicator.call(:foo, binding_, *context)
     class Proxy < self
       # @param applicable [Applicator]
       # @return Proxy if applicable is an instance of Applicator
@@ -27,8 +27,8 @@ module Verifly
       # @param binding_ [#instance_exec] target to apply applicable
       # @param context additional info to send it to applicable
       # @return application result
-      def call(binding_, context)
-        applicable.call(binding_, context)
+      def call(binding_, *context)
+        applicable.call(binding_, *context)
       end
     end
 
@@ -51,11 +51,11 @@ module Verifly
       # @param binding_ [#instance_exec] target to apply applicable to
       # @param context additional info to send to applicable
       # @return application result
-      def call(binding_, context)
+      def call(binding_, *context)
         if binding_.is_a?(Binding)
-          call_on_binding(binding_, context)
+          call_on_binding(binding_, *context)
         else
-          invoke_lambda(binding_.method(applicable), binding_, context)
+          invoke_lambda(binding_.method(applicable), binding_, *context)
         end
       end
 
@@ -65,11 +65,11 @@ module Verifly
       # @param binding_ [Binding] target to apply applicable to
       # @param context additional info to send to applicable
       # @return application result
-      def call_on_binding(binding_, context)
+      def call_on_binding(binding_, *context)
         if binding_.local_variable_defined?(applicable)
           binding_.local_variable_get(applicable)
         else
-          invoke_lambda(binding_.receiver.method(applicable), binding_, context)
+          invoke_lambda(binding_.receiver.method(applicable), binding_, *context)
         end
       end
     end
@@ -77,7 +77,7 @@ module Verifly
     # InstanceEvaluator is used for strings. It works like instance_eval or
     # Binding#eval depending on binding_ class
     # @example
-    #   Applicator.call('foo if context[:foo]', binding_, context)
+    #   Applicator.call('foo if context[:foo]', binding_, *context)
     #   # => foo if context[:foo]
     class InstanceEvaluator < self
       # @param applicable [String]
@@ -90,7 +90,7 @@ module Verifly
       # @param binding_ [#instance_exec] target to apply applicable to
       # @param context additional info to send to applicable
       # @return application result
-      def call(binding_, context)
+      def call(binding_, *context)
         if binding_.is_a?(Binding)
           binding_ = binding_.dup
           binding_.local_variable_set(:context, context)
@@ -113,7 +113,7 @@ module Verifly
     # ProcApplicatior is used when #to_proc is available.
     # It works not only with procs, but also with hashes etc
     # @example with a proc
-    #   Applicator.call(-> { foo }, binding_, context) # => foo
+    #   Applicator.call(-> { foo }, binding_, *context) # => foo
     # @example with a hash
     #   Applicator.call(Hash[foo: true], binding_, :foo) # => true
     #   Applicator.call(Hash[foo: true], binding_, :bar) # => nil
@@ -128,14 +128,14 @@ module Verifly
       # @param binding_ [#instance_exec] target to apply applicable to
       # @param context additional info to send to applicable
       # @return application result
-      def call(binding_, context)
-        invoke_lambda(applicable.to_proc, binding_, context)
+      def call(binding_, *context)
+        invoke_lambda(applicable.to_proc, binding_, *context)
       end
     end
 
     # Quoter is used when there is no other way to apply applicatable.
     # @example
-    #   Applicator.call(true, binding_, context) # => true
+    #   Applicator.call(true, binding_, *context) # => true
     class Quoter < self
       # @return applicable without changes
       def call(*)
@@ -161,8 +161,8 @@ module Verifly
     #   geneneric data you want to pass to applicable function.
     #   If applicable cannot accept params, context will not be sent
     # @return application result
-    def self.call(applicable, binding_, context)
-      build(applicable).call(binding_, context)
+    def self.call(applicable, binding_, *context)
+      build(applicable).call(binding_, *context)
     end
 
     # Always use build instead of new
@@ -180,7 +180,7 @@ module Verifly
       applicable == other.applicable
     end
 
-    # @!method call(binding_, context)
+    # @!method call(binding_, *context)
     #   @abstract
     #   Applies applicable on binding_ with context
     #   @param binding_ [#instance_exec] binding to be used for applying
@@ -194,11 +194,11 @@ module Verifly
     # @param binding_ [#instance_exec] binding_ would be used in application
     # @param context param would be passed if lambda arity > 0
     # @return invocation result
-    def invoke_lambda(lambda, binding_, context)
+    def invoke_lambda(lambda, binding_, *context)
       if lambda.arity.zero?
         binding_.instance_exec(&lambda)
       else
-        binding_.instance_exec(context, &lambda)
+        binding_.instance_exec(*context, &lambda)
       end
     end
   end
