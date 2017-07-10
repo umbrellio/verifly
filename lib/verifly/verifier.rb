@@ -11,7 +11,7 @@ module Verifly
   #   Array with all messages yielded by the verifier
   class Verifier
     autoload :ApplicatorWithOptionsBuilder,
-             'verifly/verifier/applicator_with_options_builder'
+             "verifly/verifier/applicator_with_options_builder"
 
     attr_accessor :model, :messages
 

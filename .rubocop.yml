@@ -1,5 +1,5 @@
-require:
-  - rubocop-rspec
+inherit_gem:
+  rubocop-config-umbrellio: lib/rubocop.yml
 
 AllCops:
   TargetRubyVersion: 2.3
@@ -9,29 +9,3 @@ AllCops:
 Style/Documentation:
   # Using yard to check it
   Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - spec/**/*_spec.rb
-    - verifly.gemspec
-
-Lint/AmbiguousBlockAssociation:
-  Enabled: false
-
-RSpec/MessageSpies:
-  # Spies are not always usable, i.e. we want to stub something we haven't created
-  EnforcedStyle: receive
-
-RSpec/NestedGroups:
-  # Extra nesting is good, not bad!
-  Enabled: false
-
-Style/PercentLiteralDelimiters:
-  # TODO: remove with rubocop >= 0.49
-  PreferredDelimiters:
-    default: "()"
-    "%i": "[]"
-    "%I": "[]"
-    "%r": "{}"
-    "%w": "[]"
-    "%W": "[]"
