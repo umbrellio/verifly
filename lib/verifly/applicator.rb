@@ -66,10 +66,10 @@ module Verifly
       # @param context additional info to send to applicable
       # @return application result
       def call_on_binding(binding_, context)
-        if binding_.receiver.respond_to?(applicable)
-          invoke_lambda(binding_.receiver.method(applicable), binding_, context)
-        else
+        if binding_.local_variable_defined?(applicable)
           binding_.local_variable_get(applicable)
+        else
+          invoke_lambda(binding_.receiver.method(applicable), binding_, context)
         end
       end
     end

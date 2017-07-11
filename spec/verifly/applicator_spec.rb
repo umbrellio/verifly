@@ -61,6 +61,17 @@ describe Verifly::Applicator do
 
         it { is_expected.to eq(result) }
       end
+
+      context "both method and variable exist" do
+        let(:foo) { double(:wrong_result) }
+
+        let(:binding_) do
+          foo = result
+          binding
+        end
+
+        it("gets variable instead of calling method") { is_expected.to eq(result) }
+      end
     end
   end
 
