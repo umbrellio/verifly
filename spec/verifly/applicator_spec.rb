@@ -12,33 +12,33 @@ describe Verifly::Applicator do
   let(:context) { instance_double(Object, :context) }
   let(:result) { instance_double(Object, :result) }
 
-  shared_context 'call(context, binding_)' do
+  shared_context "call(context, binding_)" do
     subject(:call!) { applicator.call(binding_, context) }
   end
 
-  shared_examples 'its call returns result' do
-    describe 'call(context, binding_)' do
-      include_context 'call(context, binding_)'
+  shared_examples "its call returns result" do
+    describe "call(context, binding_)" do
+      include_context "call(context, binding_)"
       it { is_expected.to eq(result) }
     end
   end
 
-  context 'Proxy' do
+  context "Proxy" do
     let(:applicable) { described_class.build(result) }
 
     it { is_expected.to be_a Verifly::Applicator::Proxy }
-    it_behaves_like 'its call returns result'
+    it_behaves_like "its call returns result"
   end
 
-  context 'MethodExtractor' do
+  context "MethodExtractor" do
     let(:applicable) { :foo }
 
     it { is_expected.to be_a Verifly::Applicator::MethodExtractor }
 
-    describe 'call(context, binding_)' do
-      include_context 'call(context, binding_)'
+    describe "call(context, binding_)" do
+      include_context "call(context, binding_)"
 
-      context 'method on generic object' do
+      context "method on generic object" do
         before do
           expect(binding_).to receive(:foo).with(context).and_return(result)
         end
@@ -46,14 +46,14 @@ describe Verifly::Applicator do
         it { is_expected.to eq(result) }
       end
 
-      context 'method on binding' do
+      context "method on binding" do
         let(:binding_) { binding }
         let(:applicable) { :result }
 
         it { is_expected.to eq(result) }
       end
 
-      context 'variable on binding' do
+      context "variable on binding" do
         let(:binding_) do
           foo = result
           binding
@@ -64,50 +64,50 @@ describe Verifly::Applicator do
     end
   end
 
-  context 'InstanceEvaluator' do
-    let(:applicable) { 'foo' }
+  context "InstanceEvaluator" do
+    let(:applicable) { "foo" }
 
     it { is_expected.to be_a Verifly::Applicator::InstanceEvaluator }
 
-    describe 'call(context, binding_)' do
-      shared_examples 'error backtrace points to this file' do
+    describe "call(context, binding_)" do
+      shared_examples "error backtrace points to this file" do
         subject(:error) do
           begin
             call!
           rescue => e
             e
           else
-            raise 'No error raised'
+            raise "No error raised"
           end
         end
 
-        let(:applicable) { 'raise' }
+        let(:applicable) { "raise" }
 
         its(:backtrace) do
           expect(error.backtrace[0]).to include(__FILE__)
         end
       end
 
-      include_context 'call(context, binding_)'
-      it_behaves_like 'error backtrace points to this file'
+      include_context "call(context, binding_)"
+      it_behaves_like "error backtrace points to this file"
       it { is_expected.to eq(result) }
 
-      context 'when applicable = context' do
-        let(:applicable) { 'context' }
+      context "when applicable = context" do
+        let(:applicable) { "context" }
 
         it { is_expected.to eq(context) }
       end
 
-      context 'when binding_ is a Binding' do
+      context "when binding_ is a Binding" do
         let(:binding_) { binding }
-        let(:applicable) { '[result, context]' }
+        let(:applicable) { "[result, context]" }
 
-        it_behaves_like 'error backtrace points to this file'
+        it_behaves_like "error backtrace points to this file"
         it { is_expected.to eq [result, context] }
 
         context 'when binding_ does not have "context"' do
           let(:binding_) { Object.new.send(:binding) }
-          let(:applicable) { 'context' }
+          let(:applicable) { "context" }
 
           it { is_expected.to eq(context) }
         end
@@ -115,27 +115,27 @@ describe Verifly::Applicator do
     end
   end
 
-  context 'ProcApplicatior' do
+  context "ProcApplicatior" do
     let(:applicable) { -> { foo } }
 
     it { is_expected.to be_a Verifly::Applicator::ProcApplicatior }
 
-    describe 'call(context, binding_)' do
-      include_context 'call(context, binding_)'
+    describe "call(context, binding_)" do
+      include_context "call(context, binding_)"
       it { is_expected.to eq(result) }
 
-      context 'when applicable requests arg' do
-        let(:applicable) { ->(context) { [foo, context] } }
+      context "when applicable requests arg" do
+        let(:applicable) { -> (context) { [foo, context] } }
 
         it { is_expected.to eq [result, context] }
       end
     end
   end
 
-  context 'Quoter' do
+  context "Quoter" do
     let(:applicable) { result }
 
     it { is_expected.to be_a Verifly::Applicator::Quoter }
-    it_behaves_like 'its call returns result'
+    it_behaves_like "its call returns result"
   end
 end

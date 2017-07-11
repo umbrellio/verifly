@@ -12,13 +12,13 @@ describe Verifly::ClassBuilder do
   let(:recursive) { class_double(klass, build_class: buildable) }
   let(:buildable) { class_double(klass) }
 
-  describe 'Verifly::ClassBuilder flow' do
+  describe "Verifly::ClassBuilder flow" do
     subject(:class_builder) { described_class.new([unbuildable, recursive]) }
 
     its(:call) { is_expected.to eq buildable }
   end
 
-  specify 'Verifly::ClassBuilder::Mixin#build_class' do
+  specify "Verifly::ClassBuilder::Mixin#build_class" do
     klass.buildable_classes = [unbuildable, recursive]
     expect(klass.build_class).to eq(buildable)
   end
