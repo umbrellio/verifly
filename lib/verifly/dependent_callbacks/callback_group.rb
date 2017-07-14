@@ -120,6 +120,13 @@ module Verifly
       def digest
         [name, list].hash
       end
+
+      def to_dot(binding_)
+        template_path = File.expand_path("callback_group.dot.erb", __dir__)
+        erb = ERB.new(File.read(template_path))
+        erb.filename = template_path
+        erb.result(binding)
+      end
     end
   end
 end

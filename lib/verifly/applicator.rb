@@ -30,6 +30,14 @@ module Verifly
       def call(binding_, *context)
         applicable.call(binding_, *context)
       end
+
+      def source_location(binding_)
+        applicable.source_location(binding_)
+      end
+
+      def source(binding_)
+        applicable.source(binding_)
+      end
     end
 
     # MethodExtractor is used when applicable is a symbol.
@@ -57,6 +65,14 @@ module Verifly
         else
           invoke_lambda(binding_.method(applicable), binding_, *context)
         end
+      end
+
+      def source_location(binding_)
+        binding_.method(applicable).source_location
+      end
+
+      def source(binding_)
+        binding_.method(applicable).source
       end
 
       private
@@ -100,6 +116,14 @@ module Verifly
         end
       end
 
+      def source_location(*); end
+
+      def source(*)
+        applicable
+      end
+
+      private
+
       # @return [String, Integer]
       #   file and line where `Applicator.call` was called
       def caller_line
@@ -131,6 +155,14 @@ module Verifly
       def call(binding_, *context)
         invoke_lambda(applicable.to_proc, binding_, *context)
       end
+
+      def source_location(*)
+        applicable.to_proc.source_location
+      end
+
+      def source(*)
+        applicable.to_proc.source
+      end
     end
 
     # Quoter is used when there is no other way to apply applicatable.
@@ -140,6 +172,12 @@ module Verifly
       # @return applicable without changes
       def call(*)
         applicable
+      end
+
+      def source_location(*); end
+
+      def source
+        applicable.inpsect
       end
     end
 

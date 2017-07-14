@@ -50,6 +50,8 @@ module Verifly
       # @param context
       # @yield after before or inside applicable
       def call_around(binding_, *context, &block)
+        DependentCallbacks.logger.debug "Running #{name || action.source} with #{context}"
+
         case position
         when :before
           call(binding_, *context)
@@ -60,6 +62,13 @@ module Verifly
         when :around
           call(binding_, block, *context)
         end
+      end
+
+      def to_dot_label(binding_)
+        template_path = File.expand_path("callback.dothtml.erb", __dir__)
+        erb = ERB.new(File.read(template_path))
+        erb.filename = template_path
+        erb.result(binding)
       end
     end
   end

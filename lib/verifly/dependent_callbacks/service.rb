@@ -64,6 +64,11 @@ module Verifly
           *groups.map { |k, v| [k, v.digest].join },
         ].hash
       end
+
+      # Exprorts selected group to graphiz .dot format
+      def to_dot(group, binding_)
+        compiled_group(group).to_dot(binding_)
+      end
     end
   end
 end

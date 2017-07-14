@@ -23,6 +23,10 @@ module Verifly
 
     include Storage
 
+    def self.logger
+      @logger ||= Logger.new($stdout)
+    end
+
     # @api stdlib
     # Allows children to inherit callbacks from parent
     # @param [Class] child
