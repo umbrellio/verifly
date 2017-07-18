@@ -96,25 +96,6 @@ module Verifly
         @sequence ||= TSortService.call(self)
       end
 
-      # Invokes all callbacks in group
-      # @param binding_ [#instance_exec]
-      # @param context additional info to send it into all callbacks
-      # @yield right in the middle of callbacks
-      # @return yield result
-      def invoke(binding_, *context)
-        result = nil
-
-        block_with_result_extractor = -> { result = yield }
-
-        reduced = sequence.reverse_each.reduce(block_with_result_extractor) do |reduced, callback|
-          -> { callback.call_around(binding_, *context, &reduced) }
-        end
-
-        reduced.call
-
-        result
-      end
-
       # Digest change forces recompilation of callback group in service
       # @return [Numeric]
       def digest

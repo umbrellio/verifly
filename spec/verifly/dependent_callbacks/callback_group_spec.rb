@@ -27,7 +27,12 @@ describe Verifly::DependentCallbacks::CallbackGroup do
   describe "#invoke" do
     # rubocop:disable RSpec/EmptyExampleGroup
 
-    subject(:invoke!) { callback_group.invoke(self, &action) }
+    subject(:invoke!) do
+      Verifly::DependentCallbacks::Invoker.new(callback_group) do |invoker|
+        invoker.inner_block = action
+        invoker.run(self)
+      end
+    end
 
     def self.expect_sequence(*sequence)
       it sequence.join(" < ") do
@@ -79,7 +84,15 @@ describe Verifly::DependentCallbacks::CallbackGroup do
 
         before { add_callback(:bar) }
         before { add_callback(:baz) }
-        before { callback_group.merge(other_callback_group).invoke(self, &action) }
+
+        before do
+          result = callback_group.merge(other_callback_group)
+
+          Verifly::DependentCallbacks::Invoker.new(result) do |invoker|
+            invoker.inner_block = action
+            invoker.run(self)
+          end
+        end
 
         expect_sequence(:before_bar, :before_foo, :before_baz, :action)
       end
@@ -121,6 +134,11 @@ describe Verifly::DependentCallbacks::CallbackGroup do
 
     it("includes fourth source location") do
       is_expected.to include(method(:fourth).source_location.join(":"))
+    end
+
+    it "built correctly" do
+      Verifly::DependentCallbacks::Invoker.new(callback_group) { |invoker| invoker.run(self) }
+      expect(flags).to eq %i[before_first before_second third fourth]
     end
   end
 end
