@@ -121,6 +121,8 @@ module Verifly
         [name, list].hash
       end
 
+      # Renders graphviz dot-representation of callback group
+      # @return graphviz dot
       def to_dot(binding_)
         template_path = File.expand_path("callback_group.dot.erb", __dir__)
         erb = ERB.new(File.read(template_path))

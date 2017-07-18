@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Verifly
-  # @abstract implement `#call`
+  # @abstract implement `#call`, `#source` and `#source_location`
   # Applies "applicable" objects to given bindings
   # (applicable objects are named based on their use,
   # currently any object is applicable).
@@ -31,10 +31,14 @@ module Verifly
         applicable.call(binding_, *context)
       end
 
+      # @param binding_ [#instance_exec] binding to find relative source
+      # @return [[String, Integer]?] (file, line) location of calblack source (if exists)
       def source_location(binding_)
         applicable.source_location(binding_)
       end
 
+      # @param binding_ [#instance_exec] binding to find relative source
+      # @return [String?] callback (not it's defenition) source code
       def source(binding_)
         applicable.source(binding_)
       end
@@ -67,10 +71,16 @@ module Verifly
         end
       end
 
+      # @param binding_ [#instance_exec] binding to find relative source
+      # @return [[String, Integer]] (file, line) location of calblack source (if exists)
+      # @raise [NameError] if method does not exist on binding_
       def source_location(binding_)
         binding_.method(applicable).source_location
       end
 
+      # @param binding_ [#instance_exec] binding to find relative source
+      # @return [String] relative method source defenition
+      # @raise [NameError] if method does not exist on binding_
       def source(binding_)
         binding_.method(applicable).source
       end
@@ -116,8 +126,11 @@ module Verifly
         end
       end
 
+      # Source location is not available
+      # @return [nil]
       def source_location(*); end
 
+      # @return [String] exactly it's defenition
       def source(*)
         applicable
       end
@@ -156,10 +169,12 @@ module Verifly
         invoke_lambda(applicable.to_proc, binding_, *context)
       end
 
+      # @return [String, Integer] Proc#source_location
       def source_location(*)
         applicable.to_proc.source_location
       end
 
+      # @return [String] Proc#source
       def source(*)
         applicable.to_proc.source
       end
@@ -174,8 +189,11 @@ module Verifly
         applicable
       end
 
+      # No source location available
+      # @return [nil]
       def source_location(*); end
 
+      # @return [String] quoted value's inspect
       def source
         applicable.inpsect
       end
@@ -189,7 +207,6 @@ module Verifly
     attr_accessor :applicable
 
     # Applies applicable on binding_ with context
-    # @todo add @see #initialize when its todo is done
     # @param applicable [applicable]
     #   see examples in definitions of subclasses
     # @param binding_ [#instance_exec]
@@ -224,6 +241,16 @@ module Verifly
     #   @param binding_ [#instance_exec] binding to be used for applying
     #   @param context param that will be passed if requested
     #   @return application result
+
+    # @!method source_location(binding_)
+    #   @abstract
+    #   @param binding_ [#instance_exec] binding to find relative source
+    #   @return [[String, Integer]?] (file, line) location of calblack source (if exists)
+
+    # @!method source(binding_)
+    #   @abstract
+    #   @param binding_ [#instance_exec] binding to find relative source
+    #   @return [String?] callback (not it's defenition) source code
 
     private
 

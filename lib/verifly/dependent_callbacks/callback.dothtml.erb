@@ -5,7 +5,7 @@
   </tr>
   <tr>
     <td> Defined at: </td>
-    <td> <%= action.source_location(binding_).join(":") %> </td>
+    <td> <%= action.source_location(binding_)&.join(":") %> </td>
   </tr>
   <tr>
     <td> Source code: </td>
