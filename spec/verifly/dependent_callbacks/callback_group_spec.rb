@@ -87,4 +87,40 @@ describe Verifly::DependentCallbacks::CallbackGroup do
 
     # rubocop:enable RSpec/EmptyExampleGroup
   end
+
+  describe "#to_dot_label" do
+    subject(:result) { callback_group.to_dot(binding) }
+
+    before do
+      add_callback :first
+      add_callback :second, require: :first
+
+      callback_group.add_callback(
+        Verifly::DependentCallbacks::Callback.new(
+          :before, Verifly::Applicator.build("flags << :third")
+        ),
+      )
+
+      callback_group.add_callback(Verifly::DependentCallbacks::Callback.new(:before, :fourth))
+    end
+
+    def fourth
+      flags << :fourth
+    end
+
+    it("includes digraph defenition") { is_expected.to include("digraph action {") }
+    it("includes dependencies") { is_expected.to include('"second" -> "first";') }
+
+    it "starts defenitions from <br>" do
+      is_expected.to match(%r{<td>\s+<br align="left" />})
+    end
+
+    it "includes third defenition" do
+      is_expected.to include("flags&nbsp;&lt;&lt;&nbsp;:third")
+    end
+
+    it("includes fourth source location") do
+      is_expected.to include(method(:fourth).source_location.join(":"))
+    end
+  end
 end

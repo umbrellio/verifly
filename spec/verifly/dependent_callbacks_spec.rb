@@ -2,21 +2,23 @@
 
 describe Verifly::DependentCallbacks do
   subject(:klass) do
-    Class.new do
+    Class.new(parent) do
       extend Verifly::DependentCallbacks
 
-      callback_groups :action
       attr_accessor :flags
 
       def initialize
         self.flags = []
+        super
       end
     end
   end
 
+  let(:parent) { Object }
+
   specify "integration" do # rubocop:disable RSpec/ExampleLength
     klass.class_exec do
-      module CallbacksModule
+      callbacks_module = Module.new do
         extend Verifly::DependentCallbacks::Storage
 
         callback_groups :action
@@ -51,7 +53,7 @@ describe Verifly::DependentCallbacks do
       end
 
       extend Verifly::DependentCallbacks
-      merge_callbacks_from(CallbacksModule)
+      merge_callbacks_from(callbacks_module)
 
       def initialize
         self.flags = {}
@@ -86,6 +88,8 @@ describe Verifly::DependentCallbacks do
 
   specify "inhreritance" do
     klass.class_exec do
+      callback_groups :action
+
       before_action { flags << :parent }
 
       def action
@@ -106,15 +110,17 @@ describe Verifly::DependentCallbacks do
     # wrap_method tested via specify "integration"
 
     specify "unknown method" do
+      klass.callback_groups :action
       expect { klass.export_callbacks_to(:unknown_method) }
         .to raise_error ":unknown_method export target unavailable. " \
-                        "available targets are :active_support, :wrap_method"
+                        "available targets are :active_support, :action_controller, :wrap_method"
     end
 
     specify "active_support" do
       require "active_support"
 
       klass.class_exec do
+        callback_groups :action
         include ActiveSupport::Callbacks
         before_action -> { flags << :before }
         define_callbacks :action
@@ -126,6 +132,38 @@ describe Verifly::DependentCallbacks do
       end
 
       expect(klass.new.action).to eq %i[before action]
+    end
+
+    context "actionpack" do
+      require "action_controller"
+
+      let(:parent) { ActionController::Base }
+
+      specify do
+        klass.class_exec do
+          callbacks_module = Module.new do
+            extend Verifly::DependentCallbacks::Storage
+            callback_groups :action
+
+            before_action { flags << :first }
+            before_action { flags << :second and head :ok }
+            before_action { flags << :third }
+          end
+
+          def initialize(*)
+            self.flags = []
+            self.response = ActionDispatch::Response.new
+          end
+
+          extend Verifly::DependentCallbacks
+          merge_callbacks_from(callbacks_module)
+          export_callbacks_to(:action_controller)
+        end
+
+        instance = klass.new
+        instance.run_callbacks(:process_action) { instance.flags << :action }
+        expect(instance.flags).to eq %i[first second]
+      end
     end
   end
 end

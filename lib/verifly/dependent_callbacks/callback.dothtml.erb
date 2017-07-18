@@ -11,7 +11,7 @@
     <td> Source code: </td>
     <td>
       <br align="left" /><%=
-        source = action.source(binding_)
+        source = action.source(binding_).dup
 
         source.gsub!("&", "&amp;")
         source.gsub!(" ", "&nbsp;")

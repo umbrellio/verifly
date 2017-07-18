@@ -53,7 +53,7 @@ module Verifly
         when :wrap_method then _export_callback_group_to_method_wapper(group)
         else
           raise "#{target.inspect} export target unavailable. " \
-                "available targets are :active_support, :wrap_method"
+                "available targets are :active_support, :action_controller, :wrap_method"
         end
       end
     end

@@ -75,14 +75,20 @@ module Verifly
       # @return [[String, Integer]] (file, line) location of calblack source (if exists)
       # @raise [NameError] if method does not exist on binding_
       def source_location(binding_)
-        binding_.method(applicable).source_location
+        binding_method(binding_).method(applicable).source_location
       end
 
       # @param binding_ [#instance_exec] binding to find relative source
       # @return [String] relative method source defenition
       # @raise [NameError] if method does not exist on binding_
       def source(binding_)
-        binding_.method(applicable).source
+        binding_method(binding_).method(applicable).source
+      end
+
+      # @param binding_ [#instance_exec] binding to find relative source
+      # @return [Method] method, extracted from binding
+      def binding_method(binding_)
+        binding_.is_a?(Binding) ? binding_.receiver : binding_
       end
 
       private
