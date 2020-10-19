@@ -10,7 +10,7 @@ module Verifly
     # Does nothing, provides ::Logger api
     class NullLogger < ::Logger
       # @api stdlib
-      def initialize; end
+      def initialize; end # rubocop:disable all
 
       # @api stdlib
       # Logs nothng

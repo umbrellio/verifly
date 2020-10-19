@@ -102,7 +102,7 @@ module Verifly
 
       define_method(group) do |*args, &block|
         self.class.dependent_callbacks_service.invoke(group) do |invoker|
-          invoker.around { instance_method.bind(self).call(*args, &block) if instance_method }
+          invoker.around { instance_method&.bind(self)&.call(*args, &block) }
           invoker.context = args
           invoker.run(self)
         end

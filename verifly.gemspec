@@ -1,11 +1,11 @@
 # coding: utf-8
 # frozen_string_literal: true
 
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "verifly/version"
 
-Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
+Gem::Specification.new do |spec|
   spec.name = "verifly"
   spec.version = Verifly::VERSION
   spec.authors = ["Alexander Smirnov"]
@@ -34,19 +34,19 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.executables = []
   spec.require_paths = %w[lib]
 
-  spec.required_ruby_version = "~> 2.3"
+  spec.required_ruby_version = ">= 2.5"
 
-  spec.add_development_dependency "pry", "~> 0.10"
-  spec.add_development_dependency "bundler", "~> 1.14"
-  spec.add_development_dependency "rake", "~> 10.5"
-  spec.add_development_dependency "rspec", "~> 3.5"
-  spec.add_development_dependency "yard", "~> 0.9.8"
-  spec.add_development_dependency "launchy", "~> 2.4"
-  spec.add_development_dependency "coveralls", "~> 0.8.19"
-  spec.add_development_dependency "rspec-its", "~> 1.1"
+  spec.add_development_dependency "bundler"
+  spec.add_development_dependency "coveralls"
+  spec.add_development_dependency "launchy"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "rspec-its"
+  spec.add_development_dependency "yard"
 
-  spec.add_development_dependency "activesupport" # Fot integration tests
   spec.add_development_dependency "actionpack" # Fot integration tests
+  spec.add_development_dependency "activesupport" # Fot integration tests
 
-  spec.add_development_dependency "rubocop-config-umbrellio", "~> 0.49"
+  spec.add_development_dependency "rubocop-config-umbrellio"
 end

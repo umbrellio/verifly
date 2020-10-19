@@ -27,6 +27,7 @@ describe Verifly::Applicator do
     let(:applicable) { described_class.build(result) }
 
     it { is_expected.to be_a Verifly::Applicator::Proxy }
+
     it_behaves_like "its call returns result"
   end
 
@@ -83,13 +84,11 @@ describe Verifly::Applicator do
     describe "call(context, binding_)" do
       shared_examples "error backtrace points to this file" do
         subject(:error) do
-          begin
-            call!
-          rescue => e
-            e
-          else
-            raise "No error raised"
-          end
+          call!
+        rescue => error
+          error
+        else
+          raise "No error raised"
         end
 
         let(:applicable) { "raise" }
@@ -147,6 +146,7 @@ describe Verifly::Applicator do
     let(:applicable) { result }
 
     it { is_expected.to be_a Verifly::Applicator::Quoter }
+
     it_behaves_like "its call returns result"
   end
 end

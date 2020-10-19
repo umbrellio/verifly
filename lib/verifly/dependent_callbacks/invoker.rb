@@ -24,8 +24,7 @@ module Verifly
     # @!attribute binding_
     #   @return [#instance_exec] binding_ to evaluate on
     class Invoker
-      attr_accessor :flat_sequence, :context
-      attr_accessor :inner_block
+      attr_accessor :flat_sequence, :context, :inner_block
 
       # @param callback_group [CallbackGroup]
       # @yield self if block given
