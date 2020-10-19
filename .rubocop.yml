@@ -9,3 +9,6 @@ AllCops:
 Style/Documentation:
   # Using yard to check it
   Enabled: false
+
+RSpec/EmptyLineAfterHook:
+  Enabled: false

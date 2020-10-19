@@ -45,11 +45,8 @@ describe Verifly::DependentCallbacks::CallbackGroup do
 
     context "it invokes callbacks before, after and around action" do
       before { add_callback :foo, :before }
-
       before { add_callback :bar, :after }
-
       before { add_callback :baz, :around }
-
       before { invoke! }
 
       expect_sequence(:before_foo, :action)
@@ -59,13 +56,9 @@ describe Verifly::DependentCallbacks::CallbackGroup do
 
     context "it understands `require` and `insert_before` commands" do
       before { add_callback :foo, require: :bar }
-
       before { add_callback :bar, require: %i[bat] }
-
       before { add_callback :baz, insert_before: :bar }
-
       before { add_callback :bat, :around }
-
       before { invoke! }
 
       expect_sequence(:before_bat, :before_bar, :before_foo, :action, :after_bat)
