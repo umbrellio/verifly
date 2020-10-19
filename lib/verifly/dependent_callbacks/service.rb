@@ -29,12 +29,9 @@ module Verifly
         groups[group].add_callback(Callback.new(position, *args, &block))
       end
 
-      # Invokes service for given group name
-      # @param group_name [Symbol]
-      # @param binding_ [#instance_exec]
-      # @param context
-      def invoke(group_name, binding_, *context, &block)
-        compiled_group(group_name).invoke(binding_, *context, &block)
+      def invoke(group_name)
+        invoker = Invoker.new(compiled_group(group_name))
+        yield(invoker)
       end
 
       # @return [[Symbol]] names of all groups stored inside itself or parents
@@ -63,6 +60,11 @@ module Verifly
           *parents.map(&:digest),
           *groups.map { |k, v| [k, v.digest].join },
         ].hash
+      end
+
+      # Exprorts selected group to graphiz .dot format
+      def to_dot(group, binding_)
+        compiled_group(group).to_dot(binding_)
       end
     end
   end

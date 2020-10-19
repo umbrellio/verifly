@@ -18,9 +18,11 @@ module Verifly
   module DependentCallbacks
     autoload :Callback, "verifly/dependent_callbacks/callback"
     autoload :CallbackGroup, "verifly/dependent_callbacks/callback_group"
+    autoload :Invoker, "verifly/dependent_callbacks/invoker"
     autoload :Service, "verifly/dependent_callbacks/service"
     autoload :Storage, "verifly/dependent_callbacks/storage"
 
+    extend HasLogger
     include Storage
 
     # @api stdlib
@@ -47,10 +49,11 @@ module Verifly
       (groups || dependent_callbacks_service.group_names).each do |group|
         case target
         when :active_support then _export_callback_group_to_active_support(group)
+        when :action_controller then _export_callback_group_to_action_controller(group)
         when :wrap_method then _export_callback_group_to_method_wapper(group)
         else
           raise "#{target.inspect} export target unavailable. " \
-                "available targets are :active_support, :wrap_method"
+                "available targets are :active_support, :action_controller, :wrap_method"
         end
       end
     end
@@ -64,11 +67,31 @@ module Verifly
       exports_name = :"__verifly_dependent_callbacks_exports_#{group}"
 
       define_method(exports_name) do |*context, &block|
-        self.class.dependent_callbacks_service.invoke(group, self, *context, &block)
+        self.class.dependent_callbacks_service.invoke(group) do |invoker|
+          invoker.context = context
+          invoker.inner_block = block
+          invoker.run(self)
+        end
       end
 
       private(exports_name)
       set_callback(group, :around, exports_name)
+    end
+
+    # Exports callbacks to ActionController::Base
+    # @see export_callbacks_to
+    # @param group [Symbol] name of group
+    def _export_callback_group_to_action_controller(group)
+      raise unless group == :action
+
+      around_action do |request, sequence|
+        self.class.dependent_callbacks_service.invoke(group) do |invoker|
+          invoker.context << request
+          invoker.inner_block = sequence
+          invoker.break_if { response_body }
+          invoker.run(self)
+        end
+      end
     end
 
     # Exports callbacks to methods
@@ -78,8 +101,10 @@ module Verifly
       instance_method = instance_method(group) rescue nil
 
       define_method(group) do |*args, &block|
-        self.class.dependent_callbacks_service.invoke(group, self, *args) do
-          instance_method.bind(self).call(*args, &block) if instance_method
+        self.class.dependent_callbacks_service.invoke(group) do |invoker|
+          invoker.around { instance_method.bind(self).call(*args, &block) if instance_method }
+          invoker.context = args
+          invoker.run(self)
         end
       end
     end

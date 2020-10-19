@@ -1,0 +1,14 @@
+digraph <%= name %> {
+  <% list.each do |callback| %>
+    <% uid = callback.name || callback.hash %>
+    "<%= uid %>" [label=<<%= callback.to_dot_label(binding_) %>> shape="none" fontname="monospace"];
+
+    <% callback.before.each do |x| %>
+      "<%= x %>" -> "<%= uid %>";
+    <% end %>
+
+    <% callback.after.each do |x| %>
+      "<%= uid %>" -> "<%= x %>";
+    <% end %>
+  <% end %>
+}

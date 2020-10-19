@@ -46,6 +46,7 @@ Gem::Specification.new do |spec| # rubocop:disable Metrics/BlockLength
   spec.add_development_dependency "rspec-its", "~> 1.1"
 
   spec.add_development_dependency "activesupport" # Fot integration tests
+  spec.add_development_dependency "actionpack" # Fot integration tests
 
   spec.add_development_dependency "rubocop-config-umbrellio", "~> 0.49"
 end

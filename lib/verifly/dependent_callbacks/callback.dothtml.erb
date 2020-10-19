@@ -1,0 +1,26 @@
+<table>
+  <tr>
+    <td> Name: </td>
+    <td> <%= name&.inspect || "(anonymous)" %> </td>
+  </tr>
+  <tr>
+    <td> Defined at: </td>
+    <td> <%= action.source_location(binding_)&.join(":") %> </td>
+  </tr>
+  <tr>
+    <td> Source code: </td>
+    <td>
+      <br align="left" /><%=
+        source = action.source(binding_).dup
+
+        source.gsub!("&", "&amp;")
+        source.gsub!(" ", "&nbsp;")
+        source.gsub!("<", "&lt;")
+        source.gsub!(">", "&gt;")
+
+        source.gsub!("\n", '<br align="left"/>')
+        source
+      %>
+    </td>
+  </tr>
+</table>

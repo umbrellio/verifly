@@ -45,21 +45,14 @@ module Verifly
         self.after = Array(options.fetch(:require, []))
       end
 
-      # call applicable around block depending on it's position
-      # @param binding_ [#instance_exec]
-      # @param context
-      # @yield after before or inside applicable
-      def call_around(binding_, *context, &block)
-        case position
-        when :before
-          call(binding_, *context)
-          yield
-        when :after
-          yield
-          call(binding_, *context)
-        when :around
-          call(binding_, block, *context)
-        end
+      # Converts callback to nice table in dot label format
+      # @param [#instance_exec] binding_
+      # @return [String] graphviz LabelHTML
+      def to_dot_label(binding_)
+        template_path = File.expand_path("callback.dothtml.erb", __dir__)
+        erb = ERB.new(File.read(template_path))
+        erb.filename = template_path
+        erb.result(binding)
       end
     end
   end

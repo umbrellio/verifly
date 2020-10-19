@@ -27,7 +27,12 @@ describe Verifly::DependentCallbacks::CallbackGroup do
   describe "#invoke" do
     # rubocop:disable RSpec/EmptyExampleGroup
 
-    subject(:invoke!) { callback_group.invoke(self, &action) }
+    subject(:invoke!) do
+      Verifly::DependentCallbacks::Invoker.new(callback_group) do |invoker|
+        invoker.inner_block = action
+        invoker.run(self)
+      end
+    end
 
     def self.expect_sequence(*sequence)
       it sequence.join(" < ") do
@@ -79,12 +84,61 @@ describe Verifly::DependentCallbacks::CallbackGroup do
 
         before { add_callback(:bar) }
         before { add_callback(:baz) }
-        before { callback_group.merge(other_callback_group).invoke(self, &action) }
+
+        before do
+          result = callback_group.merge(other_callback_group)
+
+          Verifly::DependentCallbacks::Invoker.new(result) do |invoker|
+            invoker.inner_block = action
+            invoker.run(self)
+          end
+        end
 
         expect_sequence(:before_bar, :before_foo, :before_baz, :action)
       end
     end
 
     # rubocop:enable RSpec/EmptyExampleGroup
+  end
+
+  describe "#to_dot_label" do
+    subject(:result) { callback_group.to_dot(binding) }
+
+    before do
+      add_callback :first
+      add_callback :second, require: :first
+
+      callback_group.add_callback(
+        Verifly::DependentCallbacks::Callback.new(
+          :before, Verifly::Applicator.build("flags << :third")
+        ),
+      )
+
+      callback_group.add_callback(Verifly::DependentCallbacks::Callback.new(:before, :fourth))
+    end
+
+    def fourth
+      flags << :fourth
+    end
+
+    it("includes digraph defenition") { is_expected.to include("digraph action {") }
+    it("includes dependencies") { is_expected.to include('"second" -> "first";') }
+
+    it "starts defenitions from <br>" do
+      is_expected.to match(%r{<td>\s+<br align="left" />})
+    end
+
+    it "includes third defenition" do
+      is_expected.to include("flags&nbsp;&lt;&lt;&nbsp;:third")
+    end
+
+    it("includes fourth source location") do
+      is_expected.to include(method(:fourth).source_location.join(":"))
+    end
+
+    it "built correctly" do
+      Verifly::DependentCallbacks::Invoker.new(callback_group) { |invoker| invoker.run(self) }
+      expect(flags).to eq %i[before_first before_second third fourth]
+    end
   end
 end
