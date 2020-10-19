@@ -137,7 +137,7 @@ module Verifly
         DependentCallbacks.logger.public_send(severity, "Verifly::DependentCallbacks::Invoker") do
           if callback
             <<~TXT.squish if callback
-              #{message} at #{render_name(callback)}
+              #{message} callback #{callback.name || "(anonymous)"}
                          in #{callback.action.source_location(binding_)&.join(':')}
             TXT
           else
@@ -148,11 +148,7 @@ module Verifly
 
       def call_with_time_report!(callback, *args) # :nodoc:
         time_in_ms = Benchmark.realtime { callback.call(*args) } * 1000
-        log!(:info, "Run #{render_name(callback)} in #{time_in_ms.round(1)}ms")
-      end
-
-      def render_name(callback) # :nodoc:
-        callback.name || "(anonymous)"
+        log!(:info, "Run in #{time_in_ms.round(1)}ms", callback: callback)
       end
     end
   end
