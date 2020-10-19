@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "benchmark"
+
 module Verifly
   module DependentCallbacks
     # Simple service to invoke callback groups
@@ -74,7 +76,7 @@ module Verifly
       # @param callback [Callback] current callbacks
       # @param sequence [Proc] already built sequence of callbacks
       def call_callback(callback, sequence)
-        log!(:info, "invokation", callback: callback)
+        log!(:debug, "Invokation", callback: callback)
 
         case callback.position
         when :before then call_callback_before(callback, sequence)
@@ -89,7 +91,7 @@ module Verifly
       # @param callback [Callback] current callbacks
       # @param sequence [Proc] already built sequence of callbacks
       def call_callback_before(callback, sequence)
-        callback.call(binding_, *context)
+        call_with_time_report!(callback, binding_, *context)
 
         if break_if_proc.call(*context)
           log!(:warn, "Chain halted", callback: callback)
@@ -103,7 +105,7 @@ module Verifly
       # @param sequence [Proc] already built sequence of callbacks
       def call_callback_after(callback, sequence)
         sequence.call
-        callback.call(binding_, *context)
+        call_with_time_report!(callback, binding_, *context)
       end
 
       # Invokes around_<name> callbacks
@@ -120,7 +122,7 @@ module Verifly
           end
         end
 
-        callback.call(binding_, inner, *context)
+        call_with_time_report!(callback, binding_, inner, *context)
 
         unless inner_executed
           log!(:warn, "Chain halted (sequential block not called)", callback: callback)
@@ -135,13 +137,22 @@ module Verifly
         DependentCallbacks.logger.public_send(severity, "Verifly::DependentCallbacks::Invoker") do
           if callback
             <<~TXT.squish if callback
-              #{message} at #{callback.name || "(anonymous)"}
+              #{message} at #{render_name(callback)}
                          in #{callback.action.source_location(binding_)&.join(':')}
             TXT
           else
             message
           end
         end
+      end
+
+      def call_with_time_report!(callback, *args) # :nodoc:
+        time_in_ms = Benchmark.realtime { callback.call(*args) } * 1000
+        log!(:info, "Run #{render_name(callback)} in #{time_in_ms.round(1)}ms")
+      end
+
+      def render_name(callback) # :nodoc:
+        callback.name || "(anonymous)"
       end
     end
   end
