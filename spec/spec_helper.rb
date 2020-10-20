@@ -5,8 +5,16 @@ require "pry"
 
 require "rspec/its"
 
+require "simplecov"
 require "coveralls"
-Coveralls.wear!
+
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new([
+  SimpleCov::Formatter::HTMLFormatter,
+  Coveralls::SimpleCov::Formatter,
+])
+
+SimpleCov.start
+
 require "verifly"
 
 RSpec.configure do |config|
