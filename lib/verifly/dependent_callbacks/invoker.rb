@@ -147,6 +147,7 @@ module Verifly
       end
 
       def call_with_time_report!(callback, *args) # :nodoc:
+        return callback.call(*args) unless DependentCallbacks.logger.info?
         time_in_ms = Benchmark.realtime { callback.call(*args) } * 1000
         log!(:info, "Run in #{time_in_ms.round(1)}ms", callback: callback)
       end

@@ -13,7 +13,12 @@ module Verifly
       def initialize; end # rubocop:disable all
 
       # @api stdlib
-      # Logs nothng
+      def level
+        0
+      end
+
+      # @api stdlib
+      # Logs nothing
       def add(*); end
     end
 
