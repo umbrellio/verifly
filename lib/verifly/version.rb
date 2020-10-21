@@ -8,5 +8,5 @@ module Verifly
   # * a stands for public api changes
   # * b stands for private api changes
   # * c stands for patch changes (not touching public or private api)
-  VERSION = "0.3.0.0"
+  VERSION = "0.3.1.0"
 end
